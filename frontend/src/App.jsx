@@ -1,12 +1,14 @@
 import React from "react";
-import ProfileSteps from "./pages/user/ProfileSteps";
+import { RouterProvider } from "react-router-dom";
+import { Router } from "./Router";
 
 function App() {
+
   return (
-    <div>
-      <ProfileSteps />
+    <div className="min-h-screen w-screen overflow-x-hidden">
+      <RouterProvider router={Router}/>
     </div>
-  );
+  )
 }
 
 export default App;

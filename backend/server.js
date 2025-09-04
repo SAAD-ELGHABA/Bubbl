@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import userRoute from "./routes/authenticateRoute.js";  
 
 dotenv.config();
 const app = express();
@@ -12,15 +13,24 @@ const io = new Server(server, {
   cors: { origin: "*" },
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000,
+  })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error(err));
 
-
+app.use("/api/user", userRoute);
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
