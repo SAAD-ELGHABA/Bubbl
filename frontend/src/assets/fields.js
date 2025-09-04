@@ -1,0 +1,21 @@
+export   const professions = [
+    "Designer", "Developer", "Content Creator", "Photographer", "Writer",
+    "Marketer", "SEO Specialist", "Data Analyst", "Project Manager",
+    "UX Researcher", "UI Designer", "Full Stack Developer", "Backend Developer",
+    "Frontend Developer", "Mobile Developer", "Game Developer", "Animator",
+    "Illustrator", "Social Media Manager", "Blogger", "YouTuber", "Streamer",
+    "Influencer", "Video Editor", "Sound Engineer", "AI Specialist",
+    "Cybersecurity Expert", "Cloud Engineer", "DevOps Engineer", "QA Tester",
+    "Product Manager", "Scrum Master", "Data Scientist", "Machine Learning Engineer",
+    "Blockchain Developer", "NFT Artist", "VR/AR Developer", "UI/UX Designer",
+    "Graphic Designer", "Actor", "Musician", "Teacher", "Doctor", "Nurse",
+    "Lawyer", "Entrepreneur", "Artist", "Baker", "Chef", "Trainer", "Yoga Instructor",
+    "Fitness Coach", "Interior Designer", "Architect", "Engineer", "Web Developer",
+    "App Developer", "Journalist", "Editor", "Podcaster", "Photographer Assistant",
+    "Voice Actor", "Translator", "Coach", "Consultant", "Investor", "Model",
+    "DJ", "Composer", "Painter", "Sculptor", "Environmentalist", "Activist",
+    "Statistician", "Economist", "Politician", "Pharmacist", "Dentist",
+    "Therapist", "Counselor", "Social Worker", "AI Researcher", "Robotics Engineer",
+    "Mechanical Engineer", "Electrical Engineer", "Civil Engineer", "Blockchain Developer",
+    "NFT Artist", "VR/AR Developer", "Data Scientist", "Machine Learning Engineer"
+  ];
