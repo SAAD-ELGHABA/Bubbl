@@ -5,6 +5,8 @@ import jwt from 'jsonwebtoken'
 import { sendEmail } from "../services/emailService.js";
 import { verificationEmailTemplate } from "../services/emailTemplates.js";
 import mongoose from "mongoose";
+import { OAuth2Client } from "google-auth-library";
+
 
 
 const generateToken = (id) => {
@@ -78,3 +80,39 @@ export const login = async (req, res) => {
 }
 
 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+export const googleAuth = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub, email, name, picture } = payload;
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({
+        googleId: sub,
+        email,
+        name,
+        avatar: picture,
+      });
+    }
+
+    const accessToken = generateToken(user._id)
+
+    res.status(200).json({
+      message: "Google login successful",
+      user,
+      token: accessToken,
+    });
+  } catch (err) {
+    console.error("Google Auth Error:", err);
+    res.status(400).json({ error: "Invalid Google token" });
+  }
+};
