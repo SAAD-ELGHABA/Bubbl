@@ -3,7 +3,6 @@ import { authLogin, authRegister } from "../api/apis";
 // Login
 export const login = (payload) => async (dispatch) => {
   try {
-    console.log(payload)
     dispatch({ type: "LOGIN_REQUEST" });
     const res = await authLogin(payload)
     dispatch({ type: "LOGIN_SUCCESS", payload: res.data });

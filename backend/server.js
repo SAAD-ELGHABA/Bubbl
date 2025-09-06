@@ -5,6 +5,7 @@ import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import userRoute from "./routes/authenticateRoute.js";  
+import { authMiddleware } from "./middleware/authMiddleware.js";
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,12 @@ mongoose
   .catch((err) => console.error(err));
 
 app.use("/api/user", userRoute);
+
+app.use("/api/me", authMiddleware, (req,res) => {
+  res.json({user: req.user})
+})
+
+
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

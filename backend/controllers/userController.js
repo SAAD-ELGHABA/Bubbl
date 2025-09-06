@@ -72,7 +72,17 @@ export const login = async (req, res) => {
             return res.status(401).json({message:"Please provide a valid password."})
         }
 
-        res.status(200).json({message:`Welcome back ${user.name}.`, user, token:generateToken(user._id)})
+        // res.status(200).json({message:`Welcome back ${user.name}.`, user, token:generateToken(user._id)})
+        const token = generateToken(user._id)
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure:process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 60 * 60 * 1000
+        })
+
+        res.json({user})
+
 
     } catch (error) {
         res.status(500).json({message:"Server Error",error:error.message})
@@ -80,19 +90,21 @@ export const login = async (req, res) => {
 }
 
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+import axios from "axios";
 
 export const googleAuth = async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token } = req.body; // access_token
 
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    const { data: googleUser } = await axios.get(
+      "https://www.googleapis.com/oauth2/v3/userinfo",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-    const payload = ticket.getPayload();
-    const { sub, email, name, picture } = payload;
+    const { sub, email, name, picture } = googleUser;
 
     let user = await User.findOne({ email });
     if (!user) {
@@ -104,7 +116,7 @@ export const googleAuth = async (req, res) => {
       });
     }
 
-    const accessToken = generateToken(user._id)
+    const accessToken = generateToken(user._id);
 
     res.status(200).json({
       message: "Google login successful",
@@ -112,7 +124,7 @@ export const googleAuth = async (req, res) => {
       token: accessToken,
     });
   } catch (err) {
-    console.error("Google Auth Error:", err);
+    console.error("Google Auth Error:", err.response?.data || err.message);
     res.status(400).json({ error: "Invalid Google token" });
   }
 };
