@@ -4,9 +4,12 @@ import FeedTab from '../componentns/tabs/FeedTab';
 import MessagesTab from '../componentns/tabs/MessagesTab';
 import NotificationsTab from '../componentns/tabs/NotificationsTab';
 import SettingsTab from '../componentns/tabs/SettingsTab';
+import { useSelector } from 'react-redux';
 
 const ProfileLayout = () => {
     const [activeTab, setActiveTab] = useState('feeds');
+  const { user, Profile} = useSelector((state) => state.auth);
+
     const [userData, setUserData] = useState({
         name: "User Name",
         username: "@username",
@@ -29,12 +32,12 @@ const ProfileLayout = () => {
 
                 <div className="mb-8 flex flex-col items-center">
                     <img
-                        src={userData.profilePic}
+                        src={Profile?.avatar}
                         alt="Profile"
                         className="w-24 h-24 rounded-full border-4 border-[#488DB4] mb-2"
                     />
-                    <h2 className="text-lg font-semibold">{userData.name}</h2>
-                    <p className="text-sm text-[#85C4E4]">{userData.username}</p>
+                    <h2 className="text-lg font-semibold">{user?.name}</h2>
+                    <p className="text-sm text-[#85C4E4]">{user?.name}</p>
                 </div>
 
                 <nav className="space-y-2">
@@ -109,19 +112,19 @@ const ProfileLayout = () => {
                 <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
                     <div
                         className="h-80 bg-cover bg-center"
-                        style={{ backgroundImage: `url(${userData.coverPhoto})` }}
+                        style={{ backgroundImage: `url(${Profile?.coverImage})` }}
                     ></div>
 
                     <div className="p-6 flex flex-col md:flex-row items-center md:items-end relative">
                         <img
-                            src={userData.profilePic}
+                            src={Profile?.avatar}
                             alt="Profile"
                             className="w-24 h-24 rounded-full border-4 border-white absolute -top-12 left-6"
                         />
 
                         <div className="ml-0 md:ml-32 mt-4 md:mt-0 flex-1">
-                            <h1 className="text-2xl font-bold text-[#02182E]">{userData.name}</h1>
-                            <p className="text-[#488DB4]">{userData.bio}</p>
+                            <h1 className="text-2xl font-bold text-[#02182E]">{user?.name}</h1>
+                            <p className="text-[#488DB4]">{Profile?.bio || "Not Included"}</p>
                         </div>
 
                         <button className="mt-4 md:mt-0 bg-[#022F56] text-white px-4 py-2 rounded-lg hover:bg-[#02182E]">

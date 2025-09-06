@@ -5,7 +5,10 @@ export const login = (payload) => async (dispatch) => {
   try {
     dispatch({ type: "LOGIN_REQUEST" });
     const res = await authLogin(payload)
-    dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+    console.log(res);
+    localStorage.setItem('token',res?.data?.token)
+    dispatch({ type: "LOGIN_SUCCESS", payload: res.data?.user });
+    dispatch({ type: "SET_PROFILE", payload: res.data?.profile });
   } catch (err) {
     dispatch({
       type: "LOGIN_FAIL",
@@ -20,8 +23,8 @@ export const register = (payload,nav) => async (dispatch) => {
     dispatch({ type: "REGISTER_REQUEST" });
 
     const res = await authRegister(payload)
-    console.log(res);
-    if(res?.data?.success) {nav('/email-verifying')}
+    localStorage?.setItem("user_slug",res?.data?.user_slug)
+    if(res?.data?.success) {nav('/resend-email')}
     // dispatch({ type: "REGISTER_SUCCESS", payload: res.data });
   } catch (err) {
     dispatch({

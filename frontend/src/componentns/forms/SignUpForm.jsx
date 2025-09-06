@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { register } from '../../actions/authActions';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpForm = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +20,7 @@ const SignUpForm = () => {
 
     const dispatch = useDispatch()
     const { loading, user, error,success } = useSelector(state => state.auth)
-
+    const navigate = useNavigate()
     const handleRegister = (e) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {

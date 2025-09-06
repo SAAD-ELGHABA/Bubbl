@@ -34,7 +34,7 @@ mongoose
 app.use("/api/user", userRoute);
 
 app.use("/api/me", authMiddleware, (req,res) => {
-  res.json({user: req.user})
+  return res.json({user: req.user})
 })
 
 

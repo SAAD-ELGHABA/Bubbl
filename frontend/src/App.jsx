@@ -1,35 +1,52 @@
-import React, { useEffect } from "react";
-import { RouterProvider } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { RouterProvider, useNavigate } from "react-router-dom";
 import { Router } from "./Router";
-import { Toaster } from 'sonner'
-import { useSelector } from "react-redux";
+import { Toaster } from "sonner";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserDecoded } from "./api/apis";
 
 function App() {
-  const user = useSelector(state => state.auth.user)
-
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  // const navigate = useNavigate();
+  const getUser = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getUserDecoded(localStorage.getItem("token"));
+      dispatch({ type: "SET_USER", payload: response?.user });
+      dispatch({ type: "SET_PROFILE", payload: response?.profile });
+      // if (response?.user) {
+      //   if (response?.profile?.isProfileCompleted) {
+      //     navigate("/me/profile");
+      //   } else {
+      //     navigate("/complete-profile");
+      //   }
+      // }else{
+      //   navigate('/')
+      // }
+    } catch (err) {
+      console.error("Error fetching user:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-  fetch("http://localhost:500/api/me", { credentials: "include" })
-    .then(res => res.json())
-    .then(data => {
-      if (data.user) {
-        dispatch({ type: "SET_USER", payload: data.user });
-      }
-    });
-}, []);
+    if (localStorage?.getItem("token")) {
+      getUser();
+    }
+  }, []);
 
-useEffect(() => {
-  console.log(user)
-}, [user])
-
-
-
-  return (
-    <div className="min-h-screen w-screen overflow-x-hidden">
-      <Toaster />
-      <RouterProvider router={Router}/>
+  return isLoading ? (
+    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-r from-[#02182E] to-[#022F56] z-50">
+      <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
     </div>
-  )
+  ) : (
+    <div className="min-h-screen w-full overflow-x-hidden relative">
+      <Toaster />
+      <RouterProvider router={Router} />
+    </div>
+  );
 }
 
 export default App;

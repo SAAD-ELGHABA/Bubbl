@@ -1,5 +1,6 @@
 const initialState = {
   user: null,
+  Profile: null,
   loading: false,
   error: null,
   success: false
@@ -14,6 +15,8 @@ export const authReducer = (state = initialState, action) => {
 
     case "LOGIN_SUCCESS":
       return {...state,loading:false,user:action.payload,success:true}
+    case "SET_PROFILE":
+      return {...state,loading:false,Profile:action.payload,success:true}
     case "REGISTER_SUCCESS":
       return { ...state, loading: false,success:true, user: action.payload };
 
