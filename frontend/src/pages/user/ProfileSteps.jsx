@@ -1,14 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Logo from "../../componentns/logo";
-import { palette } from "../../assets/Palette";
 import Step1 from "../../componentns/profile_steps/Step1";
 import Step2 from "../../componentns/profile_steps/Step2";
 import Step3 from "../../componentns/profile_steps/Step3";
+import { toast } from "sonner";
+import { uploadToCloudinary } from "../../lib/uploadToCloudinary";
+import { setProfileData } from "../../api/apis";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const steps = ["Account Info", "Personal Details", "Confirmation"];
 
 export default function ProfileSteps() {
   const [currentStep, setCurrentStep] = useState(0);
+  const { user, loading, error, success, Profile } = useSelector(
+    (state) => state.auth
+  );
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
@@ -17,131 +24,156 @@ export default function ProfileSteps() {
   const prevStep = () => {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   };
+
   const [profile, setProfile] = useState({
-    avatar: "/BUBB.png",
+    avatar: "",
     coverImage: "",
     bio: "",
     address: "",
     phone: "",
+    city: "",
+    country: "",
     gender: "",
     birthDate: "",
     profession: "",
-    portfolioUrl:""
+    portfolioUrl: "",
   });
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
+  const dispatch = useDispatch();
+  const handleProfile = async () => {
+    const today = new Date();
+    const birth = new Date(profile.birthDate);
+    const age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    const dayDiff = today.getDate() - birth.getDate();
+
+    if (
+      age < 18 ||
+      (age === 18 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))
+    ) {
+      toast.error("You must be at least 18 years old");
+      return;
+    }
+
+    if (!profile.profession || !profile.phone || !profile.gender) {
+      toast.error("Please fill all required fields: Profession, Phone, Gender");
+      return;
+    }
+
+    try {
+      const avatarUrl = await uploadToCloudinary(profile.avatar);
+
+      const coverUrl = await uploadToCloudinary(profile.coverImage);
+
+      setProfile({
+        ...profile,
+        avatar: avatarUrl,
+        coverImage: coverUrl,
+      });
+
+      console.log("Updated profile:", {
+        ...profile,
+        avatar: avatarUrl,
+        coverImage: coverUrl,
+      });
+      const response = await setProfileData({
+        ...profile,
+        avatar: avatarUrl,
+        coverImage: coverUrl,
+      });
+      console.log(response);
+      dispatch({ type: "SET_PROFILE", payload: response.data?.profile });
+    } catch (err) {
+      console.error("Upload error:", err);
+    }
   };
-
+  const navigate = useNavigate();
+  useEffect(() => {
+    Profile?.isProfileCompleted && user && navigate("/me/profile");
+  }, [Profile?.isProfileCompleted, navigate, user]);
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
-      <div className="flex items-center justify-center w-full my-4">
-        <Logo />
+    <div className="w-full min-h-screen flex flex-col items-center justify-start p-6 bg-gradient-to-r from-[#02182E] to-[#022F56]">
+      <div className="bg-gradient-to-r from-[#02182E] to-[#022F56] p-6 text-center w-full">
+        <h1 className="text-3xl font-bold text-white mb-2">BUBBL</h1>
+        <p className="text-[#85C4E4]">
+          Complete your profile to get more flexibility
+        </p>
       </div>
-
-      <div className="relative w-full mb-8">
-        <div
-          className="w-full h-2 rounded-full"
-          style={{ backgroundColor: palette.vanilla?.DEFAULT }}
-        />
-        <div
-          className="absolute top-0 left-0 h-2 rounded-full transition-all duration-500"
-          style={{
-            width: `${((currentStep + 1) / steps.length) * 100}%`,
-            backgroundColor: palette.midnight_green.DEFAULT,
-          }}
-        />
-        <div className="flex justify-between mt-2 text-sm font-medium">
-          {steps.map((step, index) => (
-            <span
-              key={index}
-              className="transition-colors duration-300"
-              style={{
-                color:
-                  index === currentStep
-                    ? palette.midnight_green.DEFAULT
-                    : palette.rich_black[400],
-              }}
-            >
-              {step}
-            </span>
-          ))}
-        </div>
-      </div>
-
       <form
-        className="p-6 border rounded-2xl shadow-sm transition-all duration-500"
+        className="w-full max-w-2xl space-y-5 bg-white rounded-2xl p-4 md:p-8 shadow-lg"
         key={currentStep}
-        style={{
-          backgroundColor: palette.vanilla[900],
-          borderColor: palette.vanilla[600],
-        }}
       >
+        <h2 className="text-2xl font-bold text-[#02182E] text-center mb-2">
+          {steps[currentStep]}
+        </h2>
+        <p className="text-center text-[#488DB4] mb-6">
+          Fill in your details to continue
+        </p>
+
         {currentStep === 0 && (
-          <div className="animate-fade-in">
-            <Step1 profile={profile} setProfile={setProfile} />
-          </div>
+          <Step1 profile={profile} setProfile={setProfile} />
         )}
         {currentStep === 1 && (
-          <div className="animate-fade-in">
-            <Step2 profile={profile} setProfile={setProfile}/>
-          </div>
+          <Step2 profile={profile} setProfile={setProfile} />
         )}
         {currentStep === 2 && (
-          <div className="animate-fade-in">
-            <Step3 profile={profile} setProfile={setProfile}/>
-          </div>
+          <Step3 profile={profile} setProfile={setProfile} />
         )}
-      </form>
 
-      <div className="flex justify-between mt-6 text-sm">
-        <button
-          onClick={prevStep}
-          disabled={currentStep === 0}
-          className="px-4 py-2 rounded-lg text-white transition-colors duration-300"
-          style={{
-            backgroundColor:
-              currentStep === 0
-                ? palette.rich_black[300]
-                : palette.midnight_green[500],
-            // color: palette.rich_black?.DEFAULT,
-            cursor: currentStep === 0 ? "not-allowed" : "pointer",
-          }}
-        >
-          Back
-        </button>
-        <div className="flex gap-2 items-center">
+        <div className="flex justify-between mt-6">
           <button
-            onClick={nextStep}
-            disabled={currentStep === steps.length - 1}
-            className="px-4 py-2 rounded-lg text-white transition-colors duration-300"
-            style={{
-              backgroundColor:
-                currentStep === steps.length - 1
-                  ? palette.rich_black[300]
-                  : palette.midnight_green[500],
-              cursor:
-                currentStep === steps.length - 1 ? "not-allowed" : "pointer",
-            }}
+            type="button"
+            onClick={prevStep}
+            disabled={currentStep === 0}
+            className={`px-5 py-3 rounded-lg font-medium transition-all duration-300 ${
+              currentStep === 0
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-gradient-to-r from-[#022F56] to-[#488DB4] text-white hover:brightness-110"
+            }`}
           >
-            {currentStep === steps.length - 1 ? "Done" : "Next"}
+            Back
           </button>
-          {currentStep >= 1 && (
-            <button
-              className="px-4 py-2 rounded-lg transition-colors duration-300 cursor-pointer"
-              style={{
-                border: `
-                1px solid
-                ${palette.midnight_green[500]}
-                `,
-                color : palette.midnight_green[500]
-              }}
-            >
-              Skip
-            </button>
-          )}
+
+          <div className="flex gap-3">
+            {currentStep < steps.length - 1 && (
+              <button
+                type="button"
+                onClick={nextStep}
+                className="px-5 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-[#022F56] to-[#488DB4] hover:from-[#02182E] hover:to-[#022F56] transition-all duration-300"
+              >
+                Next
+              </button>
+            )}
+            {currentStep === steps.length - 1 && (
+              <button
+                type="button"
+                className={`px-5 py-3 rounded-lg font-medium text-white bg-gradient-to-r from-[#022F56] to-[#488DB4] hover:from-[#02182E] hover:to-[#022F56] transition-all duration-300 ${
+                  !profile.profession ||
+                  !profile.phone ||
+                  !profile.gender ||
+                  !profile.birthDate ||
+                  new Date().getFullYear() -
+                    new Date(profile.birthDate).getFullYear() <
+                    18
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+                onClick={handleProfile}
+                disabled={
+                  !profile.profession ||
+                  !profile.phone ||
+                  !profile.gender ||
+                  !profile.birthDate ||
+                  new Date().getFullYear() -
+                    new Date(profile.birthDate).getFullYear() <
+                    18
+                }
+              >
+                Finish
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

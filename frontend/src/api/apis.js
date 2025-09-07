@@ -17,9 +17,44 @@ export const authLogin = async (payload) =>{
     const response = await api.post('/user/login',payload)
     return response
 }
-export const getUserConnected = async (id) =>{
-    const response = await api.get(`/user/user/${id}`)
-    return response
+
+export const getUserDecoded = async (token) => {
+  try {
+    if(!token) return;
+    localStorage.setItem("token", token);
+    const response = await api.get(`/me/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const userId = response?.data?.user?.id;
+    if (!userId) throw new Error("User ID not found");
+
+    const fullUser = await getUserConnected(userId);
+
+    return fullUser.data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
+};
+
+export const getUserConnected = async (id) => {
+  const response = await api.get(`/user/user/${id}`);
+  return response;
+};
+
+
+export const resendEmail = async ()=>{
+    const response = await api.post(`/user/resend-email/${localStorage?.getItem('user_slug')}`)
+    return response;
+} 
+
+export const setProfileData = async (profileData)=>{
+  const response = await api.post(`/user/set-profile`,profileData,{
+    headers:{
+      Authorization:`Bearer ${localStorage.getItem('token')}`
+    }
+  })
+  return response;
 }
-
-

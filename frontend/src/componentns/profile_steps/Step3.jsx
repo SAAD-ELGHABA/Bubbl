@@ -8,31 +8,80 @@ function Step3({ profile, setProfile }) {
   };
 
   return (
-    <div className="space-y-4">
-      <div>
-        <label className="block font-medium mb-1">Bio</label>
-        <textarea
-          name="bio"
-          value={profile.bio || ""}
-          rows={5}
-          onChange={handleChange}
-          className={`w-full border rounded p-2 border-[${palette.midnight_green.DEFAULT}] focus:ring-1 focus:ring-[${palette.dark_cyan.DEFAULT}]`}
-          placeholder="Write a short bio"
-        />
-      </div>
+<div className="space-y-5">
+  {/* Bio */}
+  <div>
+    <label
+      htmlFor="bio"
+      className="block text-sm font-medium text-[#022F56] mb-2"
+    >
+      Bio
+    </label>
+    <textarea
+      id="bio"
+      name="bio"
+      value={profile.bio || ""}
+      rows={5}
+      onChange={handleChange}
+      placeholder="Write a short bio"
+      className="w-full px-4 py-3 rounded-lg bg-white text-[#02182E] border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] focus:border-transparent transition-all resize-none"
+    />
+  </div>
 
-      <div>
-        <label className="block font-medium mb-1">Portfolio URL</label>
-        <input
-          type="url"
-          name="portfolioUrl"
-          value={profile.portfolioUrl || ""}
-          onChange={handleChange}
-          className={`w-full border rounded p-2 border-[${palette.midnight_green.DEFAULT}] focus:ring-1 focus:ring-[${palette.dark_cyan.DEFAULT}]`}
-          placeholder="https://your-portfolio.com"
-        />
-      </div>
-    </div>
+  {/* Portfolio URL */}
+  <div>
+    <label
+      htmlFor="portfolioUrl"
+      className="block text-sm font-medium text-[#022F56] mb-2"
+    >
+      City
+    </label>
+    <input
+      type="text"
+      id="city"
+      name="city"
+      value={profile.city || ""}
+      onChange={handleChange}
+      placeholder="Enter your city"
+      className="w-full px-4 py-3 rounded-lg bg-white text-[#02182E] border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] focus:border-transparent transition-all"
+    />
+  </div>
+  <div>
+    <label
+      htmlFor="country"
+      className="block text-sm font-medium text-[#022F56] mb-2"
+    >
+      Country
+    </label>
+    <input
+      type="counrty"
+      id="country"
+      name="country"
+      value={profile.country || ""}
+      onChange={handleChange}
+      placeholder="Enter your country"
+      className="w-full px-4 py-3 rounded-lg bg-white text-[#02182E] border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] focus:border-transparent transition-all"
+    />
+  </div>
+  <div>
+    <label
+      htmlFor="portfolioUrl"
+      className="block text-sm font-medium text-[#022F56] mb-2"
+    >
+      Portfolio URL
+    </label>
+    <input
+      type="url"
+      id="portfolioUrl"
+      name="portfolioUrl"
+      value={profile.portfolioUrl || ""}
+      onChange={handleChange}
+      placeholder="https://your-portfolio.com"
+      className="w-full px-4 py-3 rounded-lg bg-white text-[#02182E] border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] focus:border-transparent transition-all"
+    />
+  </div>
+</div>
+
   );
 }
 
