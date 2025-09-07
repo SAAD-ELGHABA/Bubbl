@@ -1,5 +1,5 @@
 const initialState = {
-  user: null,
+  user: JSON.parse(window.localStorage.getItem('auth-user')) || null,
   loading: false,
   error: null,
   success: false

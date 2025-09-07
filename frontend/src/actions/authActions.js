@@ -5,6 +5,7 @@ export const login = (payload) => async (dispatch) => {
   try {
     dispatch({ type: "LOGIN_REQUEST" });
     const res = await authLogin(payload)
+    window.localStorage.setItem('auth-user',JSON.stringify(res.data.user))
     dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
   } catch (err) {
     dispatch({

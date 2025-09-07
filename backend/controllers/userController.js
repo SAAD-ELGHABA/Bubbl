@@ -72,16 +72,16 @@ export const login = async (req, res) => {
             return res.status(401).json({message:"Please provide a valid password."})
         }
 
-        // res.status(200).json({message:`Welcome back ${user.name}.`, user, token:generateToken(user._id)})
-        const token = generateToken(user._id)
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure:process.env.NODE_ENV === "production",
-          sameSite: "strict",
-          maxAge: 60 * 60 * 1000
-        })
+        res.status(200).json({message:`Welcome back ${user.name}.`, user, token:generateToken(user._id)})
+        // const token = generateToken(user._id)
+        // res.cookie("token", token, {
+        //   httpOnly: true,
+        //   secure:process.env.NODE_ENV === "production",
+        //   sameSite: "strict",
+        //   maxAge: 60 * 60 * 1000 * 10
+        // })
 
-        res.json({user})
+        // res.json({user})
 
 
     } catch (error) {
@@ -112,7 +112,7 @@ export const googleAuth = async (req, res) => {
         googleId: sub,
         email,
         name,
-        avatar: picture,
+        avatar: picture.url,
       });
     }
 
