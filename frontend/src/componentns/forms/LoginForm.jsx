@@ -16,10 +16,11 @@ const LoginForm = () => {
   });
 
   const dispatch = useDispatch();
-  const { user, loading, error, success, profile } = useSelector(
+  const { user, loading, error, success, Profile } = useSelector(
     (state) => state.auth
   );
   const navigate = useNavigate();
+
   const handleLogin = (e) => {
     e.preventDefault();
     dispatch(login(formData, navigate));
@@ -41,7 +42,7 @@ const LoginForm = () => {
 
         dispatch({ type: "LOGIN_SUCCESS", payload: data?.user });
         dispatch({ type: "SET_PROFILE", payload: data?.profile });
-        localStorage?.setItem('token',data?.token)
+        localStorage?.setItem("token", data?.token);
       } catch (error) {
         console.error(
           "Google signup error:",
@@ -54,13 +55,10 @@ const LoginForm = () => {
     },
   });
 
-  // useEffect(()=>{
-  //     console.log(error, loading, success,user)
-  // }, [error,loading,success,user])
   useEffect(() => {
     success && toast.success("You are loged in successfully!");
-    success ? navigate(PROFILE) : navigate("/");
-  }, [success]);
+    user ? (Profile?.isProfileCompleted ? navigate(PROFILE) : navigate("/complete-profile")) : navigate("/");
+  }, [navigate, success, user]);
 
   return (
     <form className="space-y-5" onSubmit={handleLogin}>

@@ -11,9 +11,7 @@ import { Router } from "./Router";
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      {/* <RouterProvider router={Router}> */}
         <App />
-      {/* </RouterProvider> */}
     </GoogleOAuthProvider>
   </Provider>
 );

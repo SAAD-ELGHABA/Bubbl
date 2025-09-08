@@ -1,5 +1,4 @@
 import React from "react";
-
 import { createBrowserRouter } from "react-router-dom";
 import AuthTabs from "./pages/AuthTabs";
 import ProfileSteps from "./pages/user/ProfileSteps";
@@ -8,6 +7,7 @@ import MyProfile from "./pages/user/MyProfile";
 import ResendEmail from "./pages/ResendEmail";
 import EmailVerifying from "./pages/EmailVerifying";
 import ProfileProtector from "./layouts/protectLayout/ProfileProtector";
+import AuthWrapper from "./AuthWrapper";
 
 export const ROOT = "/";
 export const RESEND_EMAIL = "/resend-email";
@@ -17,31 +17,36 @@ export const COMPLETE_PROFILE = "/complete-profile";
 
 export const Router = createBrowserRouter([
   {
-    path: ROOT,
-    element: <AuthTabs />,
-  },
-  {
-    path: RESEND_EMAIL,
-    element: <ResendEmail />,
-  },
-  {
-    path: EMAIL_VERIFICATION,
-    element: <EmailVerifying />,
-  },
-  {
-    path: COMPLETE_PROFILE,
-    element: <ProfileSteps />,
-  },
-  {
-    element: (
-      <ProfileProtector>
-        <ProfileLayout />
-      </ProfileProtector>
-    ),
+    element: <AuthWrapper />, 
     children: [
       {
-        path: PROFILE,
-        element: <MyProfile />,
+        path: ROOT,
+        element: <AuthTabs />,
+      },
+      {
+        path: RESEND_EMAIL,
+        element: <ResendEmail />,
+      },
+      {
+        path: EMAIL_VERIFICATION,
+        element: <EmailVerifying />,
+      },
+      {
+        path: COMPLETE_PROFILE,
+        element: <ProfileSteps />,
+      },
+      {
+        element: (
+          <ProfileProtector>
+            <ProfileLayout />
+          </ProfileProtector>
+        ),
+        children: [
+          {
+            path: PROFILE,
+            element: <MyProfile />,
+          },
+        ],
       },
     ],
   },
