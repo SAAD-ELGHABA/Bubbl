@@ -1,14 +1,15 @@
-import { authLogin, authRegister } from "../api/apis";
+import { authLogin, authRegister, getUserDecoded, setProfileData } from "../api/apis";
 
 // Login
 export const login = (payload) => async (dispatch) => {
   try {
     dispatch({ type: "LOGIN_REQUEST" });
     const res = await authLogin(payload)
-    console.log(res);
+    if(!res?.data?.token) throw new Error("Token not found");
     localStorage.setItem('token',res?.data?.token)
     dispatch({ type: "LOGIN_SUCCESS", payload: res.data?.user });
-    dispatch({ type: "SET_PROFILE", payload: res.data?.profile });
+    const resProfile = await getUserDecoded(res?.data?.token);
+    dispatch({ type: "SET_PROFILE", payload: resProfile?.profile });
   } catch (err) {
     dispatch({
       type: "LOGIN_FAIL",
@@ -38,3 +39,15 @@ export const register = (payload,nav) => async (dispatch) => {
 export const logout = () => (dispatch) => {
   dispatch({ type: "LOGOUT" });
 };
+
+export const updateProfile = (profile) => async (dispatch) => {
+  dispatch({ type: "UPDATE_PROFILE", payload: profile });
+    const responseProfile = await setProfileData(profile);
+    if(responseProfile?.data?.success){
+      toast.success("Profile updated successfully!")
+    }else{
+      toast.error("Error updating profile!")
+    }
+  // dispatch({ type: "UPDATE_USER", payload: user });
+}
+

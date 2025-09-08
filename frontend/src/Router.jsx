@@ -8,16 +8,21 @@ import ResendEmail from "./pages/ResendEmail";
 import EmailVerifying from "./pages/EmailVerifying";
 import ProfileProtector from "./layouts/protectLayout/ProfileProtector";
 import AuthWrapper from "./AuthWrapper";
+import MessagesTab from "./componentns/tabs/MessagesTab";
+import SettingsTab from "./componentns/tabs/SettingsTab";
 
 export const ROOT = "/";
 export const RESEND_EMAIL = "/resend-email";
 export const EMAIL_VERIFICATION = "/verify-email";
 export const PROFILE = "/me/profile";
+export const MESSAGES = "/me/profile/messages";
+export const SETTINGS = "/me/profile/settings";
+export const NOTIFICATIONS = "/me/profile/notifications";
 export const COMPLETE_PROFILE = "/complete-profile";
 
 export const Router = createBrowserRouter([
   {
-    element: <AuthWrapper />, 
+    element: <AuthWrapper />,
     children: [
       {
         path: ROOT,
@@ -46,6 +51,15 @@ export const Router = createBrowserRouter([
             path: PROFILE,
             element: <MyProfile />,
           },
+          {
+            path: SETTINGS,
+            element: <SettingsTab />,
+          },
+          {
+            path: MESSAGES,
+            element: <MessagesTab />,
+          },
+          // you can add NOTIFICATIONS and MESSAGES here later
         ],
       },
     ],

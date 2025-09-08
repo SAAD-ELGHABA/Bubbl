@@ -5,22 +5,36 @@ import cors from "cors";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import userRoute from "./routes/authenticateRoute.js";  
+import conversationRoutes from "./routes/conversationRoutes.js";  
 import { authMiddleware } from "./middleware/authMiddleware.js";
 
 dotenv.config();
 const app = express();
+
 const server = createServer(app);
+
 const io = new Server(server, {
-  cors: { origin: "*" },
+  cors: { origin: "*", methods: ["GET", "POST"] },
 });
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: [process.env.FRONTEND_URL,"http://localhost:5173"],
     credentials: true,
   })
 );
 app.use(express.json());
+
+
+io.on("connection", (socket) => {
+  console.log("⚡ A user connected:", socket.id);
+
+
+  socket.on("disconnect", () => {
+    console.log("❌ User disconnected:", socket.id);
+  });
+});
+
 
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -36,6 +50,8 @@ app.use("/api/user", userRoute);
 app.use("/api/me", authMiddleware, (req,res) => {
   return res.json({user: req.user})
 })
+
+app.use("/api/conversations", conversationRoutes);
 
 
 

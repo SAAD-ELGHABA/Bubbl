@@ -15,9 +15,9 @@ function ProfileProtector({ children }) {
       }
 
       // Logged in but profile not completed
-      if (!Profile?.isProfileCompleted) {
-        navigate("/complete-profile"); // Make sure this is your constant/route
-      }
+      // if (!Profile?.isProfileCompleted) {
+      //   navigate("/complete-profile"); // Make sure this is your constant/route
+      // }
     }
   }, [loading, user, Profile, navigate]);
 

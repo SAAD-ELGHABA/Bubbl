@@ -88,8 +88,9 @@ export default function ProfileSteps() {
   };
   const navigate = useNavigate();
   useEffect(() => {
+    
     Profile?.isProfileCompleted && user && navigate("/me/profile");
-  }, [Profile?.isProfileCompleted, navigate, user]);
+  }, [Profile, navigate, user]);
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-start p-6 bg-gradient-to-r from-[#02182E] to-[#022F56]">
       <div className="bg-gradient-to-r from-[#02182E] to-[#022F56] p-6 text-center w-full">

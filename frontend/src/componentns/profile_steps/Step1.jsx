@@ -2,6 +2,10 @@ import React from "react";
 import { palette } from "../../assets/Palette";
 import { professions } from "../../assets/fields";
 import ProfessionDropdown from "../drop_downs/ProfessionDropdown";
+
+
+
+
 function Step1({ profile, setProfile }) {
   const handleChange = (e) => {
     const { name, value } = e.target;

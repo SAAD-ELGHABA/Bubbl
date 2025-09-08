@@ -3,7 +3,8 @@ const initialState = {
   Profile: null,
   loading: false,
   error: null,
-  success: false
+  success: false,
+  isConnected:false
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -12,14 +13,12 @@ export const authReducer = (state = initialState, action) => {
       return {...state,loading:true,error:null}
     case "REGISTER_REQUEST":
       return { ...state, loading: true, error: null };
-
     case "LOGIN_SUCCESS":
       return {...state,loading:false,user:action.payload,success:true}
     case "SET_PROFILE":
       return {...state,loading:false,Profile:action.payload,success:true}
     case "REGISTER_SUCCESS":
       return { ...state, loading: false,success:true, user: action.payload };
-
     case "LOGIN_FAIL":
       return { ...state, loading: false, error: action.payload };
     case "REGISTER_FAIL":
@@ -29,6 +28,8 @@ export const authReducer = (state = initialState, action) => {
       return { ...state, user: null };
     case "SET_USER":
       return {...state, user:action.payload}
+    case "IS_CONNECTED":
+      return {...state,isConnected:true}
     default:
       return state;
   }

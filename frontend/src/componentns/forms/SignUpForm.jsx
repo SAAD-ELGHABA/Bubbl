@@ -39,7 +39,7 @@ const SignUpForm = () => {
                 const { data } = await axios.post("http://localhost:5000/api/user/google", {
                     token: access_token, // send the actual Google access_token
                 });
-
+                window.localStorage.setItem('auth-user', JSON.stringify(data.user))
                 dispatch({ type: "LOGIN_SUCCESS", payload: data });
                 console.log("Google signup success:", data);
             } catch (error) {
