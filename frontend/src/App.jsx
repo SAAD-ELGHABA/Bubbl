@@ -13,6 +13,7 @@ function App() {
     try {
       setIsLoading(true);
       const response = await getUserDecoded(localStorage.getItem("token"));
+      console.log(response)
       dispatch({ type: "SET_USER", payload: response?.user });
       dispatch({ type: "SET_PROFILE", payload: response?.profile });
       // if (response?.user) {

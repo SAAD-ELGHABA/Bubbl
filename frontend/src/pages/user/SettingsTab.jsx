@@ -1,15 +1,41 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import ProfileTab from '../../componentns/tabs/ProfileTab'
+import { Camera } from 'lucide-react'
+import { uploadToCloudinary } from '../../lib/uploadToCloudinary'
+import { toast } from 'sonner'
+import { updateProfile } from '../../actions/authActions'
 
 const SettingsTab = () => {
-
-    const [user, setUser] = useState(useSelector(state => state.auth.user))
-    const [settingTarget, setSettingTarget] = useState('none')
+    const dispatch = useDispatch()
+    const [user, setUser] = useState(useSelector(state => state.auth.profile))
+    const [settingTarget, setSettingTarget] = useState('profile')
+    const {success} = useSelector(state => state.auth)
 
     useEffect(() => {
         console.log(settingTarget)
     }, [settingTarget])
+    const handleAvatarUpload = async (e) => {
+        
+        const updateAvatar = await uploadToCloudinary(e.target.files[0])
+        console.log(updateAvatar)
+        setUser({ ...user, avatar: updateAvatar })
+        dispatch(updateProfile(user))
+        if(success){
+            toast.success("Profile updated successfully!")
+            setSettingTarget('none')
+        }
+    }
+    const handleCoverChange = async (e) => {
+        const coverImage = await uploadToCloudinary(e.target.files[0])
+        setUser({ ...user, coverImage })
+        dispatch(updateProfile(user))
+        if(success){
+            toast.success("Profile updated successfully!")
+            setSettingTarget('none')
+        }
+    }
+
 
 
     return (
@@ -21,13 +47,45 @@ const SettingsTab = () => {
             <div className='flex flex-col max-w-5xl mx-auto w-full mb-8'>
                 <div
                     className="h-80 bg-cover bg-center rounded-t-lg  relative"
-                    style={{ backgroundImage: `url(${user?.coverPhoto || '/cover-placeholder.png'})` }}
+                    style={{ backgroundImage: `url(${user?.coverImage || '/cover-placeholder.png'})` }}
                 >
-                    <img
-                        src={user?.avatar || '/picture-placeholder.png'}
-                        alt="Profile"
-                        className="w-24 h-24 rounded-full border-4 border-white absolute -bottom-12 left-6"
-                    />
+                    {
+                        settingTarget === 'profile' && (
+                            <label htmlFor="cover-upload" className="absolute bottom-2 right-2 flex items-center justify-center gap-2 bg-[#488DB4] text-white border border-[#02182E] p-2 rounded-full cursor-pointer">
+                           Edit Profile Cover <Camera size={18} />
+                            <input
+                                id="cover-upload"
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleCoverChange}
+                            />
+                        </label>
+                        )
+                    }
+
+                    <div className='absolute -bottom-12 left-6 w-24 h-24'>
+                        <img
+                            src={user?.avatar || '/picture-placeholder.png'}
+                            alt="Profile"
+                            className="w-full h-full rounded-full border-4 border-white object-cover"
+                        />
+                        {
+                            settingTarget === 'profile' && (
+                                <label htmlFor="avatar-upload" className="absolute bottom-0 right-0 bg-[#488DB4] p-2 rounded-full cursor-pointer">
+                                    <Camera size={16} />
+                                    <input
+                                        id="avatar-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleAvatarUpload}
+                                    />
+                                </label>
+                            )
+                        }
+
+                    </div>
                 </div>
                 {
                     settingTarget === 'none' && (

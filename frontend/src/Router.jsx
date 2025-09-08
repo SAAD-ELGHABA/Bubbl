@@ -8,11 +8,16 @@ import MyProfile from "./pages/user/MyProfile";
 import ResendEmail from "./pages/ResendEmail";
 import EmailVerifying from "./pages/EmailVerifying";
 import ProfileProtector from "./layouts/protectLayout/ProfileProtector";
+import { Settings } from "lucide-react";
+import SettingsTab from "./pages/user/SettingsTab";
 
 export const ROOT = "/";
 export const RESEND_EMAIL = "/resend-email";
 export const EMAIL_VERIFICATION = "/verify-email";
 export const PROFILE = "/me/profile";
+export const MESSAGES = "/me/profile/messages";
+export const SETTINGS = "/me/profile/settings";
+export const NOTIFICATIONS = "/me/profile/notifications";
 export const COMPLETE_PROFILE = "/complete-profile";
 
 export const Router = createBrowserRouter([
@@ -33,16 +38,21 @@ export const Router = createBrowserRouter([
     element: <ProfileSteps />,
   },
   {
-    element: (
-      <ProfileProtector>
-        <ProfileLayout />
-      </ProfileProtector>
-    ),
+    element:<ProfileLayout />,
+    // element: (
+    //   <ProfileProtector>
+    //     <ProfileLayout />
+    //   </ProfileProtector>
+    // ),
     children: [
       {
         path: PROFILE,
         element: <MyProfile />,
       },
+      {
+        path:SETTINGS,
+        element: <SettingsTab />
+      }
     ],
   },
 ]);

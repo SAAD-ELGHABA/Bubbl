@@ -9,6 +9,7 @@ const ProfileLayout = () => {
     
     // const [userData, setUserData] = useState()
     const { user } = useSelector(state => state.auth)
+    const { profile } = useSelector(state => state.auth)
     const dispatch = useDispatch()
     const location = useLocation
    const activeTab = (uri) => {
@@ -32,9 +33,9 @@ const ProfileLayout = () => {
 
                 <div className="mb-8 flex flex-col items-center">
                     <img
-                        src={user?.avatar || '/picture-placeholder.png'}
+                        src={profile?.avatar || '/picture-placeholder.png'}
                         alt="Profile"
-                        className="w-24 h-24 rounded-full border-4 border-[#488DB4] mb-2"
+                        className="w-24 h-24 rounded-full border-4 object-cover border-[#488DB4] mb-2"
                     />
                     <h2 className="text-lg font-semibold">{user?.name}</h2>
                     <p className="text-sm text-[#85C4E4]">{user.slug}</p>

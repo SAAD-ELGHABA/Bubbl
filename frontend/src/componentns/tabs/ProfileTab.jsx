@@ -1,38 +1,37 @@
-import { Edit, Mail, MapPin, Phone, Save } from 'lucide-react';
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux';
+import { Edit, Save } from 'lucide-react';
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { professions } from '../../assets/fields';
+import ProfessionDropdown from '../drop_downs/ProfessionDropdown';
+import { toast } from 'sonner';
+import { updateProfile } from '../../actions/authActions';
 
 const ProfileTab = () => {
-
-  const [editMode, setEditMode] = useState(false);
+    const dispatch = useDispatch();
+    const [editMode, setEditMode] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [userData, setUserData] = useState(
-    useSelector(state => state.auth.user)
-  );
+        useSelector(state => state.auth.user)
+    );
+    const [profile, setProfile] = useState(useSelector(state => state.auth.profile));
 
-
-    const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
 
     const handleSave = async () => {
-    setIsLoading(true);
-    try {
-      // Simulate API call to save data
-      setTimeout(() => {
-        setIsLoading(false);
-        setEditMode(false);
-        alert('Profile updated successfully!');
-      }, 1500);
-    } catch (error) {
-      console.error('Error saving data:', error);
-      setIsLoading(false);
-    }
-  };
+        setIsLoading(true);
+        try {
+            
+            // dispatch(updateUser(userData));
+            dispatch(updateProfile(profile));
+            setTimeout(() => {
+                setIsLoading(false);
+                setEditMode(false);
+                // toast.success('Profile updated successfully!');
+            }, 1500);
+        } catch (error) {
+            console.error('Error saving data:', error);
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="space-y-6 w-full pt-16 pb-8 px-4 bg-white rounded-b-md shadow-lg">
@@ -63,7 +62,7 @@ const ProfileTab = () => {
                             type="text"
                             name="name"
                             value={userData.name}
-                            onChange={handleInputChange}
+                            onChange={(e) => setUserData({ ...userData, name: e.target.value })}
                             disabled={!editMode}
                             className="w-full px-4 py-2 rounded-lg border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] disabled:bg-gray-100"
                         />
@@ -76,15 +75,17 @@ const ProfileTab = () => {
                                 type="email"
                                 name="email"
                                 value={userData.email}
-                                onChange={handleInputChange}
+                                onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                                 disabled={!editMode}
                                 className="w-full px-4 py-2 rounded-lg border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] disabled:bg-gray-100"
                             />
-                            <Mail size={18} className="ml-2 text-[#488DB4]" />
                         </div>
                     </div>
                 </div>
-
+                <div>
+                    <label className="block text-sm font-medium text-[#022F56] mb-1">Biography</label>
+                    <textarea name="bio" placeholder='Type your biography' className='w-full px-4 py-2 rounded-lg border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] disabled:bg-gray-100' onChange={e => setProfile({ ...profile, bio: e.target.value })}>{profile?.bio}</textarea>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-[#022F56] mb-1">Phone Number</label>
@@ -92,12 +93,11 @@ const ProfileTab = () => {
                             <input
                                 type="tel"
                                 name="phone"
-                                value={userData.phone}
-                                onChange={handleInputChange}
+                                value={profile?.phone}
+                                onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
                                 disabled={!editMode}
                                 className="w-full px-4 py-2 rounded-lg border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] disabled:bg-gray-100"
                             />
-                            <Phone size={18} className="ml-2 text-[#488DB4]" />
                         </div>
                     </div>
 
@@ -112,18 +112,30 @@ const ProfileTab = () => {
                     </div>
                 </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-[#022F56] mb-1">Address</label>
-                    <div className="flex items-center">
-                        <input
-                            type="text"
-                            name="address"
-                            value={userData.address}
-                            onChange={handleInputChange}
-                            disabled={!editMode}
-                            className="w-full px-4 py-2 rounded-lg border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] disabled:bg-gray-100"
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div>
+                        <label className="block text-sm font-medium text-[#022F56] mb-1">Birth day</label>
+                        <input type="date" name="birthDate"
+                            value={new Date(profile?.birthDate).toISOString().split("T")[0]}
+                            onChange={(e)=>setProfile({...profile, birthDate: e.target.value})}
+                            className='w-full rounded-lg border border-gray-300 dark:border-gray-700 
+                     px-3 py-2 text-gray-800 dark:text-gray-200 
+                     bg-white dark:bg-gray-800 
+                     focus:ring-2 focus:ring-blue-500 focus:outline-none'
                         />
-                        <MapPin size={18} className="ml-2 text-[#488DB4]" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-[#022F56] mb-1">Address</label>
+                        <div className="flex items-center">
+                            <input
+                                type="text"
+                                name="address"
+                                value={profile?.address}
+                                onChange={(e)=>setProfile({...profile, address: e.target.value})}
+                                disabled={!editMode}
+                                className="w-full px-4 py-2 rounded-lg border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] disabled:bg-gray-100"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -133,8 +145,8 @@ const ProfileTab = () => {
                         <input
                             type="text"
                             name="city"
-                            value={userData.city}
-                            onChange={handleInputChange}
+                            value={profile?.city}
+                            onChange={(e)=>setProfile({...profile, city: e.target.value})}
                             disabled={!editMode}
                             className="w-full px-4 py-2 rounded-lg border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] disabled:bg-gray-100"
                         />
@@ -145,8 +157,31 @@ const ProfileTab = () => {
                         <input
                             type="text"
                             name="country"
-                            value={userData.country}
-                            onChange={handleInputChange}
+                            value={profile?.country}
+                            onChange={(e)=>setProfile({...profile, country: e.target.value})}
+                            disabled={!editMode}
+                            className="w-full px-4 py-2 rounded-lg border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] disabled:bg-gray-100"
+                        />
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <ProfessionDropdown
+                            value={profile.profession}
+                            onChange={(val) =>
+                                setProfile((prev) => ({ ...prev, profession: val }))
+                            }
+                            options={professions}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-[#022F56] mb-1">Portfolio Url</label>
+                        <input
+                            type="text"
+                            name="portfolioUrl"
+                            value={profile?.portfolioUrl || 'https://www.yourportfolio.com'}
+                            onChange={(e)=>setProfile({...profile, portfolioUrl: e.target.value})}
                             disabled={!editMode}
                             className="w-full px-4 py-2 rounded-lg border border-[#85C4E4] focus:outline-none focus:ring-2 focus:ring-[#488DB4] disabled:bg-gray-100"
                         />

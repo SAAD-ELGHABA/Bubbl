@@ -29,15 +29,17 @@ const userSchema = new mongoose.Schema(
     }
 )
 
-userSchema.pre('save',function(next){
+userSchema.pre('save', function(next) {
+  if (this.isModified('name')) {
     this.slug = slugify(this.name, {
-        lower:true,
-        strict:true,
-        replacement: "_",
-        trim:true
-    })
-    next()
-})
+      lower: true,
+      strict: true,
+      replacement: "_",
+      trim: true
+    });
+  }
+  next();
+});
 
 
 
