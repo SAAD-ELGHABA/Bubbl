@@ -11,6 +11,7 @@ const app = express();
 
 app.use((req, res, next) => {
   const allowedOrigins = [
+    "https://bubbl-rho.vercel.app/",
     process.env.FRONTEND_URL,
     "http://localhost:5173",
     "http://localhost:3000"
