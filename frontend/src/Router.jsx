@@ -10,6 +10,8 @@ import ProfileProtector from "./layouts/protectLayout/ProfileProtector";
 import AuthWrapper from "./AuthWrapper";
 import SettingsTab from "./componentns/tabs/SettingsTab";
 import MessagesPage from "./pages/user/MessagesPage";
+import FriendsPage from "./pages/user/FriendsPage";
+import FriendProfileInfo from "./pages/FriendProfileInfo";
 
 export const ROOT = "/";
 export const RESEND_EMAIL = "/resend-email";
@@ -18,7 +20,9 @@ export const PROFILE = "/me/profile";
 export const MESSAGES = "/me/profile/messages";
 export const SETTINGS = "/me/profile/settings";
 export const NOTIFICATIONS = "/me/profile/notifications";
+export const FRIENDS = "/me/profile/friends";
 export const COMPLETE_PROFILE = "/complete-profile";
+export const FRIENDPROFILEINFO = "/me/profile/profile-info/:UserSlug";
 
 export const Router = createBrowserRouter([
   {
@@ -58,6 +62,14 @@ export const Router = createBrowserRouter([
           {
             path: MESSAGES,
             element: <MessagesPage />,
+          },
+          {
+            path: FRIENDS,
+            element: <FriendsPage />,
+          },
+          {
+            path: FRIENDPROFILEINFO,
+            element: <FriendProfileInfo />,
           },
           // you can add NOTIFICATIONS and MESSAGES here later
         ],

@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import userRoute from "./routes/authenticateRoute.js";  
 import conversationRoutes from "./routes/conversationRoutes.js";  
 import { authMiddleware } from "./middleware/authMiddleware.js";
+import browseRoute from "./routes/browseRoute.js";
 
 const app = express();
 
@@ -51,20 +52,13 @@ app.get('/',(req,res)=>{
   res.send("welcome to bubbl backend !")
 })
 
-app.get("/debug/env", (req, res) => {
-  res.json({
-    mongoUri: process.env.MONGO_URI ? "✅ set" : "❌ missing",
-    frontendUrl: process.env.FRONTEND_URL || "❌ missing",
-    nodeEnv: process.env.NODE_ENV || "❌ missing",
-  });
-});
-
-
 app.use("/api/user", userRoute);
 
 app.use("/api/me", authMiddleware, (req,res) => {
   return res.json({user: req.user})
 })
+
+app.use("/api/browse",authMiddleware,browseRoute)
 
 app.use("/api/conversations", conversationRoutes);
 

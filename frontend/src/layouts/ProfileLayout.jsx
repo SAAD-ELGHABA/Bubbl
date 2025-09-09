@@ -16,7 +16,7 @@ import {
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-import { MESSAGES, NOTIFICATIONS, PROFILE, SETTINGS } from "../Router";
+import { MESSAGES, NOTIFICATIONS, PROFILE, SETTINGS, FRIENDS } from "../Router";
 
 const ProfileLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,7 +26,7 @@ const ProfileLayout = () => {
 
   const dispatch = useDispatch();
   const location = useLocation();
-  
+
   const activeTab = (uri) => {
     return uri === location.pathname
       ? "bg-[#022F56] text-white"
@@ -47,7 +47,11 @@ const ProfileLayout = () => {
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 bg-[#02182E] text-white p-4 z-40 flex justify-between items-center">
         <button onClick={toggleSidebar} className="p-2 rounded-md">
-          {sidebarOpen ? <X size={24} className="text-white absolute z-50" /> : <Menu size={24} />}
+          {sidebarOpen ? (
+            <X size={24} className="text-white absolute z-50" />
+          ) : (
+            <Menu size={24} />
+          )}
         </button>
         <h1 className="text-xl font-bold">ChatApp</h1>
         <div className="w-10"></div> {/* Spacer for balance */}
@@ -55,7 +59,7 @@ const ProfileLayout = () => {
 
       {/* Overlay for mobile when sidebar is open */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
           onClick={toggleSidebar}
         ></div>
@@ -64,7 +68,7 @@ const ProfileLayout = () => {
       {/* Sidebar */}
       <div
         className={`w-64 bg-[#02182E] text-white p-4 fixed h-full overflow-y-auto z-40 transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0 md:static`}
         style={{ scrollbarWidth: "none" }}
       >
@@ -84,7 +88,7 @@ const ProfileLayout = () => {
             )}
           </div>
           <h2 className="text-lg font-semibold">{user?.name}</h2>
-          <p className="text-sm text-[#85C4E4]">{user.slug}</p>
+          <p className="text-sm text-[#85C4E4]">{user?.slug}</p>
         </div>
 
         <nav className="space-y-2">
@@ -131,9 +135,11 @@ const ProfileLayout = () => {
             </button>
           </Link>
 
-          <Link to={"#"} onClick={() => setSidebarOpen(false)}>
+          <Link to={FRIENDS} onClick={() => setSidebarOpen(false)}>
             <button
-              className={`w-full text-left py-3 px-4 rounded-lg flex items-center `}
+              className={`w-full text-left py-3 px-4 rounded-lg flex items-center ${activeTab(
+                FRIENDS
+              )}`}
             >
               <span className="mr-2">
                 <Users size={18} />

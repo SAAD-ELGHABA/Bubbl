@@ -42,5 +42,15 @@ userSchema.pre('save', function(next) {
 });
 
 
+userSchema.virtual("profile", {
+  ref: "Profile",
+  localField: "_id",
+  foreignField: "user_id",
+  justOne: true, 
+});
+
+userSchema.set("toJSON", { virtuals: true });
+userSchema.set("toObject", { virtuals: true });
+
 
 export default mongoose.model('User',userSchema)

@@ -1,6 +1,7 @@
 import express from 'express'
 import  {getUserInfo, googleAuth, login, register, resendEmail, setProfile, updatePassword, updateUser}  from '../controllers/userController.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
+
 const userRoute = express.Router()
 
 

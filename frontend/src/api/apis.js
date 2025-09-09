@@ -76,3 +76,13 @@ export const setPassword = async (passwordData)=>{
   })
   return response;
 }
+
+export const getUsers = async ()=>{
+  const token = localStorage.getItem('token')
+  const response = await api.get(`/browse/users`,{
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  })
+  return response;
+}
