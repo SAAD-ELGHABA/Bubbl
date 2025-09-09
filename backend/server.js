@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import userRoute from "./routes/authenticateRoute.js";  
 import conversationRoutes from "./routes/conversationRoutes.js";  
 import { authMiddleware } from "./middleware/authMiddleware.js";
+
 const app = express();
 
 app.use((req, res, next) => {
@@ -35,13 +36,10 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 const envFile = process.env.NODE_ENV === "production"
   ? ".env.production"
   : ".env.development";
 dotenv.config({ path: envFile });
-
 
 const server = createServer(app);
 
@@ -56,9 +54,7 @@ app.use(
   })
 );
 
-
 app.use(express.json());
-
 
 io.on("connection", (socket) => {
   console.log("⚡ A user connected:", socket.id);
@@ -68,7 +64,6 @@ io.on("connection", (socket) => {
     console.log("❌ User disconnected:", socket.id);
   });
 });
-
 
 mongoose
   .connect(process.env.MONGO_URI, {
@@ -83,6 +78,15 @@ app.get('/',(req,res)=>{
   res.send("welcome to bubbl backend !")
 })
 
+app.get("/debug/env", (req, res) => {
+  res.json({
+    mongoUri: process.env.MONGO_URI ? "✅ set" : "❌ missing",
+    frontendUrl: process.env.FRONTEND_URL || "❌ missing",
+    nodeEnv: process.env.NODE_ENV,
+  });
+});
+
+
 app.use("/api/user", userRoute);
 
 app.use("/api/me", authMiddleware, (req,res) => {
@@ -90,7 +94,6 @@ app.use("/api/me", authMiddleware, (req,res) => {
 })
 
 app.use("/api/conversations", conversationRoutes);
-
 
 
 const PORT = process.env.PORT || 5000;
