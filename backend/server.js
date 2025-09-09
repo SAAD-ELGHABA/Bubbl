@@ -8,6 +8,33 @@ import userRoute from "./routes/authenticateRoute.js";
 import conversationRoutes from "./routes/conversationRoutes.js";  
 import { authMiddleware } from "./middleware/authMiddleware.js";
 
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    "http://localhost:5173",
+    "http://localhost:3000"
+  ];
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  }
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204); 
+  }
+
+  next();
+});
+
+
+
 const envFile = process.env.NODE_ENV === "production"
   ? ".env.production"
   : ".env.development";
@@ -44,8 +71,6 @@ io.on("connection", (socket) => {
 
 mongoose
   .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000,
   })
   .then(() => console.log("✅ MongoDB connected"))
