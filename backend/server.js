@@ -78,7 +78,6 @@ app.get('/',(req,res)=>{
   res.send("welcome to bubbl backend !")
 })
 
-// Debug route to verify env vars on Vercel
 app.get("/debug/env", (req, res) => {
   res.json({
     mongoUri: process.env.MONGO_URI ? "✅ set" : "❌ missing",
