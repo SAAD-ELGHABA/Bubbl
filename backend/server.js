@@ -8,7 +8,11 @@ import userRoute from "./routes/authenticateRoute.js";
 import conversationRoutes from "./routes/conversationRoutes.js";  
 import { authMiddleware } from "./middleware/authMiddleware.js";
 
-dotenv.config();
+const envFile = process.env.NODE_ENV === "production"
+  ? ".env.production"
+  : ".env.development";
+dotenv.config({ path: envFile });
+
 const app = express();
 
 const server = createServer(app);
@@ -19,10 +23,12 @@ const io = new Server(server, {
 
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL,"http://localhost:5173","http://localhost:3000"],
+    origin: [process.env.FRONTEND_URL, "http://localhost:3000"],
     credentials: true,
   })
 );
+
+
 app.use(express.json());
 
 
