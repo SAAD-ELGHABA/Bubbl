@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import userRoute from "./routes/authenticateRoute.js";  
 import conversationRoutes from "./routes/conversationRoutes.js";  
 import { authMiddleware } from "./middleware/authMiddleware.js";
+const app = express();
 
 app.use((req, res, next) => {
   const allowedOrigins = [
@@ -40,7 +41,6 @@ const envFile = process.env.NODE_ENV === "production"
   : ".env.development";
 dotenv.config({ path: envFile });
 
-const app = express();
 
 const server = createServer(app);
 
