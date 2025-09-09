@@ -45,6 +45,10 @@ mongoose
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error(err));
 
+app.get('/',(req,res)=>{
+  res.send("welcome to bubbl backend !")
+})
+
 app.use("/api/user", userRoute);
 
 app.use("/api/me", authMiddleware, (req,res) => {
