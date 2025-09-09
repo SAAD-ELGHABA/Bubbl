@@ -10,35 +10,10 @@ import { authMiddleware } from "./middleware/authMiddleware.js";
 
 const app = express();
 
-app.use((req, res, next) => {
-  const allowedOrigins = [
-    "https://bubbl-rho.vercel.app/",
-    process.env.FRONTEND_URL,
-    "http://localhost:5173",
-    "http://localhost:3000"
-  ];
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  }
-
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204); 
-  }
-
-  next();
-});
-
 const envFile = process.env.NODE_ENV === "production"
   ? ".env.production"
   : ".env.development";
+
 dotenv.config({ path: envFile });
 
 const server = createServer(app);
@@ -46,6 +21,8 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: { origin: [process.env.FRONTEND_URL, "http://localhost:3000","http://localhost:5173"], methods: ["GET", "POST"] },
 });
+
+app.use(cors());
 
 app.use(
   cors({
