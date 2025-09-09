@@ -8,8 +8,8 @@ import ResendEmail from "./pages/ResendEmail";
 import EmailVerifying from "./pages/EmailVerifying";
 import ProfileProtector from "./layouts/protectLayout/ProfileProtector";
 import AuthWrapper from "./AuthWrapper";
-import MessagesTab from "./componentns/tabs/MessagesTab";
 import SettingsTab from "./componentns/tabs/SettingsTab";
+import MessagesPage from "./pages/user/MessagesPage";
 
 export const ROOT = "/";
 export const RESEND_EMAIL = "/resend-email";
@@ -57,7 +57,7 @@ export const Router = createBrowserRouter([
           },
           {
             path: MESSAGES,
-            element: <MessagesTab />,
+            element: <MessagesPage />,
           },
           // you can add NOTIFICATIONS and MESSAGES here later
         ],
