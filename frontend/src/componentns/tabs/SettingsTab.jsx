@@ -36,14 +36,14 @@ const SettingsTab = () => {
   };
 
   return (
-    <div className="w-full overflow-hidden h-full">
+    <div className="w-full overflow-hidden h-full  ">
       <div className="bg-gradient-to-r from-[#02182E] to-[#022F56] p-3 mb-4 text-white">
-        <h1 className="text-2xl font-bold">Account Settings</h1>
-        <p className="text-[#85C4E4]">
+        <h1 className="text-xl md:text-2xl font-bold">Account Settings</h1>
+        <p className="text-[#85C4E4] text-xs md:text-sm">
           Manage your profile and account preferences
         </p>
       </div>
-      <div className="flex flex-col max-w-5xl mx-auto w-full mb-8">
+      <div className="flex flex-col md:max-w-5xl md:mx-auto w-full mb-8">
         <div
           className="h-80 bg-cover bg-center rounded-t-lg  relative"
           style={{

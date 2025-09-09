@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Bell,
   Calendar,
@@ -10,6 +10,8 @@ import {
   Newspaper,
   Settings,
   Users,
+  Menu,
+  X,
 } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,32 +19,57 @@ import { toast } from "sonner";
 import { MESSAGES, NOTIFICATIONS, PROFILE, SETTINGS } from "../Router";
 
 const ProfileLayout = () => {
-  // const [userData, setUserData] = useState()
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const { Profile } = useSelector((state) => state.auth);
   const { isConnected } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
-  const location = useLocation;
+  const location = useLocation();
+  
   const activeTab = (uri) => {
-    return uri === location()
+    return uri === location.pathname
       ? "bg-[#022F56] text-white"
       : "text-[#85C4E4] hover:bg-[#022F56]";
   };
 
   const handleLogOut = () => {
     dispatch({ type: "LOGOUT" });
-    toast.success("You are logout successfully!");
+    toast.success("You are logged out successfully!");
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
   };
 
   return (
     <div className="flex min-h-screen bg-[#CCDEE4]">
+      {/* Mobile Header */}
+      <div className="md:hidden fixed top-0 left-0 right-0 bg-[#02182E] text-white p-4 z-40 flex justify-between items-center">
+        <button onClick={toggleSidebar} className="p-2 rounded-md">
+          {sidebarOpen ? <X size={24} className="text-white absolute z-50" /> : <Menu size={24} />}
+        </button>
+        <h1 className="text-xl font-bold">ChatApp</h1>
+        <div className="w-10"></div> {/* Spacer for balance */}
+      </div>
+
+      {/* Overlay for mobile when sidebar is open */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={toggleSidebar}
+        ></div>
+      )}
+
+      {/* Sidebar */}
       <div
-        className="w-64 bg-[#02182E] text-white p-4 fixed h-full overflow-y-scroll"
+        className={`w-64 bg-[#02182E] text-white p-4 fixed h-full overflow-y-auto z-40 transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
+          md:translate-x-0 md:static`}
         style={{ scrollbarWidth: "none" }}
       >
-        <div className="flex items-center justify-center mb-8">
-          <h1 className="text-2xl font-bold">ChatApp</h1>
+        <div className="flex items-center justify-center mb-8 mt-4 md:mt-0">
+          <h1 className="text-2xl font-bold hidden md:block">ChatApp</h1>
         </div>
 
         <div className="mb-8 flex flex-col items-center ">
@@ -72,7 +99,7 @@ const ProfileLayout = () => {
             Feeds
           </button>
 
-          <Link to={MESSAGES}>
+          <Link to={MESSAGES} onClick={() => setSidebarOpen(false)}>
             <button
               className={`w-full text-left py-3 px-4 rounded-lg flex items-center ${activeTab(
                 MESSAGES
@@ -88,7 +115,7 @@ const ProfileLayout = () => {
             </button>
           </Link>
 
-          <Link to={NOTIFICATIONS}>
+          <Link to={NOTIFICATIONS} onClick={() => setSidebarOpen(false)}>
             <button
               className={`w-full text-left py-3 px-4 rounded-lg flex items-center ${activeTab(
                 NOTIFICATIONS
@@ -104,7 +131,7 @@ const ProfileLayout = () => {
             </button>
           </Link>
 
-          <Link to={"#"}>
+          <Link to={"#"} onClick={() => setSidebarOpen(false)}>
             <button
               className={`w-full text-left py-3 px-4 rounded-lg flex items-center `}
             >
@@ -115,7 +142,7 @@ const ProfileLayout = () => {
             </button>
           </Link>
 
-          <Link to={"#"}>
+          <Link to={"#"} onClick={() => setSidebarOpen(false)}>
             <button
               className={`w-full text-left py-3 px-4 rounded-lg flex items-center`}
             >
@@ -126,7 +153,7 @@ const ProfileLayout = () => {
             </button>
           </Link>
 
-          <Link to={SETTINGS}>
+          <Link to={SETTINGS} onClick={() => setSidebarOpen(false)}>
             <button
               className={`w-full text-left py-3 px-4 rounded-lg flex items-center ${activeTab(
                 SETTINGS
@@ -142,7 +169,7 @@ const ProfileLayout = () => {
 
         <div className="mt-8">
           <h3 className="text-sm uppercase text-[#85C4E4] mb-2">Suggested</h3>
-          <Link to={"#"}>
+          <Link to={"#"} onClick={() => setSidebarOpen(false)}>
             <button className="w-full text-left py-2 px-4 rounded-lg text-[#85C4E4] hover:bg-[#022F56] flex items-center">
               <span className="mr-2">
                 <Gamepad size={18} />
@@ -150,7 +177,7 @@ const ProfileLayout = () => {
               Games
             </button>
           </Link>
-          <Link to={"#"}>
+          <Link to={"#"} onClick={() => setSidebarOpen(false)}>
             <button className="w-full text-left py-2 px-4 rounded-lg text-[#85C4E4] hover:bg-[#022F56] flex items-center">
               <span className="mr-2">
                 <Calendar size={18} />
@@ -158,7 +185,7 @@ const ProfileLayout = () => {
               Events
             </button>
           </Link>
-          <Link to={"#"}>
+          <Link to={"#"} onClick={() => setSidebarOpen(false)}>
             <button className="w-full text-left py-2 px-4 rounded-lg text-[#85C4E4] hover:bg-[#022F56] flex items-center">
               <span className="mr-2">
                 <ChartArea size={18} />
@@ -168,8 +195,8 @@ const ProfileLayout = () => {
           </Link>
         </div>
         <button
-          className="mt-10 py-2 w-full bg-slate-950  font-semibold border border-slate-950 shadow-md shadow-black/50 rounded-md flex items-center gap-2 justify-center"
-          onClick={() => handleLogOut()}
+          className="mt-10 py-2 w-full bg-slate-950 font-semibold border border-slate-950 shadow-md shadow-black/50 rounded-md flex items-center gap-2 justify-center"
+          onClick={handleLogOut}
         >
           Logout{" "}
           <span>
@@ -184,7 +211,7 @@ const ProfileLayout = () => {
       </div>
 
       {/* Main Content */}
-      <div className="ml-64 flex-1 overflow-hidden">
+      <div className="md:ml-0 flex-1 overflow-hidden mt-16 md:mt-0">
         <Outlet />
       </div>
     </div>
