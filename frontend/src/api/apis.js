@@ -59,3 +59,20 @@ export const setProfileData = async (profileData)=>{
   return response;
 }
 
+export const setUserData = async (userData)=>{
+  const response = await api.post(`/user/update-user`,userData,{
+    headers:{
+      Authorization:`Bearer ${localStorage.getItem('token')}`
+    }
+  })
+  return response;
+}
+
+export const setPassword = async (passwordData)=>{
+  const response = await api.post(`/user/update-password`,passwordData,{
+    headers:{
+      Authorization:`Bearer ${localStorage.getItem('token')}`
+    }
+  })
+  return response;
+}

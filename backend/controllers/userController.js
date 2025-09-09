@@ -7,6 +7,7 @@ import { sendEmail } from "../services/emailService.js";
 import { verificationEmailTemplate } from "../services/emailTemplates.js";
 import mongoose from "mongoose";
 import { OAuth2Client } from "google-auth-library";
+import axios from "axios";
 
 
 
@@ -92,7 +93,6 @@ export const login = async (req, res) => {
     }
 }
 
-import axios from "axios";
 
 export const googleAuth = async (req, res) => {
   try {
@@ -268,6 +268,64 @@ export const setProfile = async (req, res) => {
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const updateUser = async (req, res) => {
+  
+  try {
+    const userId = req.user?.id; 
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const { name, email } = req.body;
+
+    if (!name || !email) {
+      return res.status(400).json({ message: "Name and Email are required" });
+    }
+    const emailExists = await User.findOne({ email, _id: { $ne: userId } });
+    if (emailExists) {
+      return res.status(400).json({ message: "Email is already in use" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    } 
+    user.name = name;
+    user.email = email;
+    await user.save();
+    res.status(200).json({ message: "User updated successfully", user });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const updatePassword = async (req, res) => {
+  try {
+    const userId = req.user?.id; 
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current and new passwords are required" });
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const isMatch =  bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect" });
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error", error: error.message });
   }

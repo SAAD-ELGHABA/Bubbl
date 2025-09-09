@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { professions } from "../../assets/fields";
 import ProfessionDropdown from "../drop_downs/ProfessionDropdown";
 import { toast } from "sonner";
-import { updateProfile } from "../../actions/authActions";
+import { updateProfile, updateUser } from "../../actions/authActions";
 
 const ProfileTab = () => {
   const dispatch = useDispatch();
@@ -20,12 +20,12 @@ const ProfileTab = () => {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // dispatch(updateUser(userData));
+      dispatch(updateUser(userData));
       dispatch(updateProfile(Profile));
       setTimeout(() => {
         setIsLoading(false);
         setEditMode(false);
-        // toast.success('Profile updated successfully!');
+        toast.success('Profile updated successfully!');
       }, 1500);
     } catch (error) {
       console.error("Error saving data:", error);

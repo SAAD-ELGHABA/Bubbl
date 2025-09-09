@@ -1,4 +1,4 @@
-import { authLogin, authRegister, getUserDecoded, setProfileData } from "../api/apis";
+import { authLogin, authRegister, getUserDecoded, setPassword, setProfileData, setUserData } from "../api/apis";
 
 // Login
 export const login = (payload) => async (dispatch) => {
@@ -51,3 +51,19 @@ export const updateProfile = (profile) => async (dispatch) => {
   // dispatch({ type: "UPDATE_USER", payload: user });
 }
 
+export const updateUser = (user) => async (dispatch) => {
+  dispatch({ type: "UPDATE_USER", payload: user });
+    const responseUser = await setUserData(user);
+    if(responseUser?.data?.success){
+      toast.success("Profile updated successfully!")
+    }else{
+      toast.error("Error updating profile!")
+    }
+  // dispatch({ type: "UPDATE_USER", payload: user });
+}
+
+export const updatePassword = (passwords) => async (dispatch) => {
+  dispatch({ type: "UPDATE_PASSWORD_REQUEST" });
+    const response = await setPassword(passwords)
+    return response?.data
+}

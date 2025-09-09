@@ -5,6 +5,7 @@ import { Camera } from "lucide-react";
 import { uploadToCloudinary } from "../../lib/uploadToCloudinary";
 import { toast } from "sonner";
 import { updateProfile } from "../../actions/authActions";
+import PasswordTab from "./PasswordTab";
 
 const SettingsTab = () => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ const SettingsTab = () => {
   const [profile, setProfile] = useState(
     useSelector((state) => state.auth?.Profile)
   );
-  const [settingTarget, setSettingTarget] = useState("profile");
+  const [settingTarget, setSettingTarget] = useState("password");
   const { success } = useSelector((state) => state.auth);
 
   const handleAvatarUpload = async (e) => {
@@ -159,6 +160,8 @@ const SettingsTab = () => {
           </div>
         )}
         {settingTarget === "profile" && <ProfileTab />}
+
+        {settingTarget === "password" && <PasswordTab /> }
       </div>
     </div>
   );
