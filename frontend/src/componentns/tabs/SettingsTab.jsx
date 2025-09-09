@@ -13,7 +13,7 @@ const SettingsTab = () => {
   const [profile, setProfile] = useState(
     useSelector((state) => state.auth?.Profile)
   );
-  const [settingTarget, setSettingTarget] = useState("password");
+  const [settingTarget, setSettingTarget] = useState("none");
   const { success } = useSelector((state) => state.auth);
 
   const handleAvatarUpload = async (e) => {
