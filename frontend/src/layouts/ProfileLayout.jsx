@@ -43,7 +43,7 @@ const ProfileLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#CCDEE4]">
+    <div className="flex h-screen bg-[#CCDEE4]">
       {/* Mobile Header */}
       <div className="md:hidden fixed top-0 left-0 right-0 bg-[#02182E] text-white p-4 z-40 flex justify-between items-center">
         <button onClick={toggleSidebar} className="p-2 rounded-md">
@@ -67,7 +67,7 @@ const ProfileLayout = () => {
 
       {/* Sidebar */}
       <div
-        className={`w-64 bg-[#02182E] text-white p-4 fixed h-full overflow-y-auto z-40 transition-transform duration-300 ease-in-out
+        className={`w-64 bg-[#02182E] text-white p-4 fixed h-full top-0 bottom-0 overflow-y-auto z-40 transition-transform duration-300 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0 md:static`}
         style={{ scrollbarWidth: "none" }}
@@ -217,7 +217,7 @@ const ProfileLayout = () => {
       </div>
 
       {/* Main Content */}
-      <div className="md:ml-0 flex-1 overflow-hidden mt-16 md:mt-0">
+      <div className="md:ml-0 flex-1 overflow-scroll  mt-16 md:mt-0">
         <Outlet />
       </div>
     </div>
