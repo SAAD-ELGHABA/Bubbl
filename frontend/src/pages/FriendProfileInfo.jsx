@@ -56,7 +56,7 @@ const FriendProfileInfo = () => {
           <div className="flex items-center">
             <div className="bg-[#022F56] rounded-lg p-2 flex items-center mr-3">
               <Award className="text-[#85C4E4] mr-2" size={18} />
-              <span className="text-sm">Premium Member</span>
+              <span className="text-sm">Premiu Member</span>
             </div>
           </div>
         </div>
