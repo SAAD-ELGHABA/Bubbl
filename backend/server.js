@@ -8,7 +8,8 @@ import userRoute from "./routes/authenticateRoute.js";
 import conversationRoutes from "./routes/conversationRoutes.js";  
 import { authMiddleware } from "./middleware/authMiddleware.js";
 import browseRoute from "./routes/browseRoute.js";
-
+import friendShipRouter from "./routes/friendShipRouter.js";
+import { initSocket } from "./socket.js";
 const app = express();
 
 const envFile = process.env.NODE_ENV === "production"
@@ -19,9 +20,7 @@ dotenv.config({ path: envFile });
 
 const server = createServer(app);
 
-const io = new Server(server, {
-  cors: { origin: [process.env.FRONTEND_URL, "http://localhost:3000","http://localhost:5173"], methods: ["GET", "POST"] },
-});
+const io = initSocket(server);
 
 app.use(cors());
 
@@ -33,13 +32,19 @@ app.use(
 );
 
 app.use(express.json());
-
+let onlineUsers = new Map();
 io.on("connection", (socket) => {
   console.log("⚡ A user connected:", socket.id);
-
+  socket.on("register", (userId) => {
+    onlineUsers.set(userId, socket.id);
+    console.log("User registered:", userId);
+  });
 
   socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
+    for (let [userId, sId] of onlineUsers.entries()) {
+      if (sId === socket.id) onlineUsers.delete(userId);
+    }
+    console.log("User disconnected:", socket.id);
   });
 });
 
@@ -59,6 +64,8 @@ app.use("/api/me", authMiddleware, (req,res) => {
 })
 
 app.use("/api/browse",authMiddleware,browseRoute)
+
+app.use("/api/friendship",authMiddleware,friendShipRouter)
 
 app.use("/api/conversations", conversationRoutes);
 

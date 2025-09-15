@@ -86,3 +86,14 @@ export const getUsers = async ()=>{
   })
   return response;
 }
+
+
+export const sendFriendRequest = async (userId)=>{
+    const token = localStorage.getItem('token')
+  const response = await api.post(`/friendship/request/${userId}`,{},{
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  })
+  return response;
+}

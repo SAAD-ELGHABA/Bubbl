@@ -1,0 +1,23 @@
+import Friendship from "../models/Friendship.js";
+import { getIO, getOnlineUsers } from "../socket.js";
+export const handleFriendshipRequest = async (req,res)=>{
+
+    const senderId = req.user.id;
+    const recipientId = req.params.id;
+
+    const friendship = await Friendship.create({
+    requester: senderId,
+    recipient: recipientId,
+    status: "pending"
+    });
+
+  const io = getIO();
+  const onlineUsers = getOnlineUsers();
+
+  const recipientSocket = onlineUsers.get(recipientId);
+  if (recipientSocket) {
+    io.to(recipientSocket).emit("friendRequestReceived", { from: senderId });
+  }
+
+    res.json({ message: "Friend request sent!", friendship });
+};

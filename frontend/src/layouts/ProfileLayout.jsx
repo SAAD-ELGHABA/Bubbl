@@ -17,6 +17,8 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import { MESSAGES, NOTIFICATIONS, PROFILE, SETTINGS, FRIENDS } from "../Router";
+import { useEffect } from "react";
+import socket from "../utils/socket";
 
 const ProfileLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -41,7 +43,17 @@ const ProfileLayout = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+  useEffect(() => {
+    socket.emit("register", user?.id);
 
+    socket.on("friendRequestReceived", (data) => {
+      console.log("New friend request from:", data.from);
+    });
+
+    return () => {
+      socket.off("friendRequestReceived");
+    };
+  }, [user?.id]);
   return (
     <div className="flex h-screen bg-[#CCDEE4]">
       {/* Mobile Header */}
