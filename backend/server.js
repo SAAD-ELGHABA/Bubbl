@@ -10,6 +10,7 @@ import { authMiddleware } from "./middleware/authMiddleware.js";
 import browseRoute from "./routes/browseRoute.js";
 import friendShipRouter from "./routes/friendShipRouter.js";
 import { initSocket } from "./socket.js";
+import connectDB from "./utils/mongodb.js";
 const app = express();
 
 const envFile = process.env.NODE_ENV === "production"
@@ -48,11 +49,14 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error(err));
-
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ message: "DB connection failed" });
+  }
+});
 app.get('/',(req,res)=>{
   res.send("welcome to bubbl backend !")
 })
@@ -71,4 +75,4 @@ app.use("/api/conversations", conversationRoutes);
 
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+server.listen(PORT,"0.0.0.0", () => console.log(`🚀 Server running on port ${PORT}`));
