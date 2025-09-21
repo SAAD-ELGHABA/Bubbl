@@ -1,63 +1,160 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, MessageCircle, UserPlus, MapPin, Briefcase, 
   Calendar, Mail, Phone, Award, Crown, Users, Camera,
-  X, Edit3, Shield, Star, Heart
+  X, Edit3, Shield, Star, Heart, Loader2, AlertCircle
 } from 'lucide-react';
 import { FRIENDS } from '../Router';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserBySlug, fetchUsers } from '../actions/usersActions';
+import { sendFriendRequest } from '../api/apis';
 
 const FriendProfileInfo = () => {
   const [activeTab, setActiveTab] = useState('posts');
   const [isConnected, setIsConnected] = useState(false);
+  const [isSendingRequest, setIsSendingRequest] = useState(false);
+  const [requestError, setRequestError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [showFullBio, setShowFullBio] = useState(false);
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user, loading, error, allUsers } = useSelector(state => state.users);
+  const { userSlug } = useParams();
 
-  // Sample data - in a real app this would come from props or API
-  const user = {
-    name: 'Emma Richardson',
-    profession: 'Senior Architect',
-    location: 'New York, NY',
-    bio: 'Designing spaces that inspire and transform lives. Passionate about sustainable architecture and modern aesthetics.',
-    avatar: '/emma-architect.jpg',
-    coverImage: '/architect-cover.jpg',
-    isPremium: true,
+  // Fetch all users if not already loaded
+  useEffect(() => {
+    if (allUsers && allUsers.length === 0) {
+      dispatch(fetchUsers());
+    }
+  }, [dispatch, allUsers]);
+
+  // Fetch specific user by slug
+  useEffect(() => {
+    if (userSlug) {
+      dispatch(fetchUserBySlug(userSlug));
+    }
+  }, [dispatch, userSlug, allUsers]);
+
+  // Handle error state
+  useEffect(() => {
+    if (error) {
+      console.error('Error loading user:', error);
+    }
+  }, [error]);
+
+  // Map user data to component structure
+  const currentUser = user ? {
+    name: user.name || 'No Name',
+    profession: user.profile?.profession || 'No Profession',
+    location: user.profile?.address || 'No Location',
+    bio: user.profile?.bio || 'No bio available',
+    avatar: user.profile?.avatar || '/default-avatar.png',
+    coverImage: user.profile?.coverImage || '/default-cover.jpg',
+    isPremium: user.isPremium || true,
+    isConnected: user.isConnected || false,
+    mutualFriends: user.mutualFriends || 0,
+    posts: user.posts || 0,
+    photos: user.photos || 0,
+    friends: user.friends || 0,
+    email: user.email || 'No email',
+    phone: user.profile?.phone || 'No phone',
+    joinDate: user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown',
+    photosData: [] // You might want to populate this from user's photos if available
+  } : {
+    name: 'Loading...',
+    profession: 'Loading...',
+    location: 'Loading...',
+    bio: 'Loading...',
+    avatar: '/default-avatar.png',
+    coverImage: '/default-cover.jpg',
+    isPremium: false,
     isConnected: false,
-    mutualFriends: 12,
-    posts: 47,
-    photos: 28,
-    friends: 243,
-    email: 'emma.richardson@example.com',
-    phone: '+1 (555) 123-4567',
-    joinDate: 'March 2018',
-    photosData: [
-      { id: 1, url: '/arch-photo-1.jpg', likes: 42 },
-      { id: 2, url: '/arch-photo-2.jpg', likes: 28 },
-      { id: 3, url: '/arch-photo-3.jpg', likes: 56 },
-      { id: 4, url: '/arch-photo-4.jpg', likes: 31 },
-      { id: 5, url: '/arch-photo-5.jpg', likes: 19 },
-      { id: 6, url: '/arch-photo-6.jpg', likes: 67 },
-    ]
+    mutualFriends: 0,
+    posts: 0,
+    photos: 0,
+    friends: 0,
+    email: 'Loading...',
+    phone: 'Loading...',
+    joinDate: 'Loading...',
+    photosData: []
   };
 
-  const connectWithUser = () => {
-    setIsConnected(true);
-    // In a real app, this would make an API call
+  // Use the actual user or default data
+
+
+  const connectWithUser = async () => {
+    if (!user?._id) return;
+    
+    try {
+      setRequestError(null);
+      setIsSendingRequest(true);
+      
+      const response = await sendFriendRequest(user._id);
+      
+      if (response.data.success) {
+        setIsConnected(true);
+      } else {
+        setRequestError(response.data.message || 'Failed to send friend request');
+      }
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+      setRequestError(error.response?.data?.message || 'An error occurred while sending friend request');
+    } finally {
+      setIsSendingRequest(false);
+    }
   };
+
+  // Show loading state
+  if (loading && !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#CCDEE4] to-[#E6F2F7]">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-[#02182E] mx-auto mb-4" />
+          <p className="text-lg text-[#02182E]">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#CCDEE4] to-[#E6F2F7] p-4">
+        <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full text-center">
+          <div className="bg-red-100 p-3 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="h-8 w-8 text-red-600" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Error Loading Profile</h2>
+          <p className="text-gray-600 mb-6">We couldn't load the profile. The user may not exist or there was an error.</p>
+          <button
+            onClick={() => navigate(FRIENDS)}
+            className="bg-[#02182E] text-white px-6 py-2 rounded-lg hover:bg-[#03315c] transition-colors"
+          >
+            Back to Connections
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#CCDEE4] to-[#E6F2F7] pb-12">
       {/* Header */}
-      <div className="bg-[#02182E] text-white p-4 md:p-6">
+      <div className="bg-[#02182E] text-white px-4 md:px-6 py-2">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link to={FRIENDS} className="flex items-center text-[#85C4E4] hover:text-white transition-colors">
-            <ArrowLeft size={20} className="mr-2" />
-            <span>Back to Connections</span>
+            <ArrowLeft size={16} className="mr-2" />
+            <span className="text-xs">Back</span>
           </Link>
           <div className="flex items-center">
-            <div className="bg-[#022F56] rounded-lg p-2 flex items-center mr-3">
-              <Award className="text-[#85C4E4] mr-2" size={18} />
-              <span className="text-sm">Premiu Member</span>
-            </div>
+            {currentUser.isPremium && (
+              <div className="bg-[#022F56] rounded-lg p-2 flex items-center mr-3">
+                <Award className="text-[#f4e006] mr-2" size={14} /> 
+                <span className="text-xs">Premium</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -65,25 +162,33 @@ const FriendProfileInfo = () => {
       {/* Profile Content */}
       <div className="max-w-6xl mx-auto px-4 md:px-6 mt-2 ">
         {/* Cover Photo */}
-        <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-6 h-64 md:h-80">
+        <div className="relative rounded-2xl overflow-hidden shadow-2xl mb-6 h-42 md:h-58">
           <img 
-            src={user.coverImage} 
+            src={currentUser.coverImage || '/default-cover.jpg'} 
             alt="Cover" 
             className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/default-cover.jpg';
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#02182E] to-transparent"></div>
           
           {/* Profile Avatar */}
-          <div className="absolute -bottom-16 left-8">
+          <div className="absolute bottom-0  left-0">
             <div className="relative">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl border-4 border-white bg-white shadow-2xl overflow-hidden">
+              <div className="w-24 h-24 md:w-28 md:h-28 rounded-2xl border-4 border-white bg-white shadow-2xl overflow-hidden">
                 <img 
-                  src={user.avatar} 
-                  alt={user.name}
+                  src={currentUser.avatar || '/default-avatar.png'} 
+                  alt={currentUser.name}
                   className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = '/default-avatar.png';
+                  }}
                 />
               </div>
-              {user.isPremium && (
+              {currentUser.isPremium && (
                 <div className="absolute -top-2 -right-2 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full p-2 shadow-lg">
                   <Crown size={16} className="text-white" />
                 </div>
@@ -93,17 +198,17 @@ const FriendProfileInfo = () => {
         </div>
 
         {/* Profile Info */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-8 mt-4 md:mt-8 border border-white/30">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl px-6 py-2  mt-4 md:mt-8 border border-white/30">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
             <div>
-              <h1 className="text-3xl md:text-4xl font-light text-[#02182E] mb-2">{user.name}</h1>
-              <div className="flex items-center text-[#022F56] mb-2">
-                <Briefcase size={18} className="mr-2" />
-                <span className="text-lg">{user.profession}</span>
+              <h1 className="text-xl md:text-2xl font-light text-[#02182E] mb-1">{currentUser?.name}</h1>
+              <div className="flex items-center text-[#022F56] mb-1">
+                <Briefcase size={16} className="mr-2" />
+                <span className="text-sm">{currentUser?.profession}</span>
               </div>
               <div className="flex items-center text-[#488DB4]">
                 <MapPin size={16} className="mr-2" />
-                <span>{user.location}</span>
+                <span className="text-xs">{currentUser?.location.toLowerCase()}</span>
               </div>
             </div>
             
@@ -111,65 +216,90 @@ const FriendProfileInfo = () => {
               {!isConnected ? (
                 <button 
                   onClick={connectWithUser}
-                  className="bg-gradient-to-r from-[#022F56] to-[#488DB4] text-white py-3 px-6 rounded-xl flex items-center transition-all duration-300 hover:from-[#02182E] hover:to-[#022F56] shadow-md hover:shadow-lg"
+                  disabled={isSendingRequest}
+                  className={`bg-gradient-to-r from-[#022F56] to-[#488DB4] text-white py-1 px-6 rounded-md flex items-center transition-all duration-300 hover:from-[#02182E] text-sm hover:to-[#022F56] shadow-md hover:shadow-lg ${isSendingRequest ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                  <UserPlus size={18} className="mr-2" />
-                  Connect
+                  {isSendingRequest ? (
+                    <>
+                      <Loader2 className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus size={16} className="mr-2" />
+                      Connect
+                    </>
+                  )}
                 </button>
               ) : (
-                <div className="bg-[#CCDEE4] text-[#022F56] py-3 px-6 rounded-xl flex items-center">
-                  <UserPlus size={18} className="mr-2" />
-                  Connected
+                <div className="flex flex-col">
+                  <button className="bg-gradient-to-r from-green-600 to-green-500 text-white py-1 px-6 rounded-md flex items-center text-sm shadow-md">
+                    <UserPlus size={16} className="mr-2" />
+                    Request Sent
+                  </button>
+                  {requestError && (
+                    <p className="text-red-500 text-xs mt-1">{requestError}</p>
+                  )}
                 </div>
               )}
               
-              <button className="bg-gradient-to-r from-[#85C4E4] to-[#488DB4] text-white py-3 px-6 rounded-xl flex items-center transition-all duration-300 hover:from-[#488DB4] hover:to-[#022F56] shadow-md hover:shadow-lg">
-                <MessageCircle size={18} className="mr-2" />
+              <button className="bg-gradient-to-r from-[#85C4E4] to-[#488DB4] text-white py-1 px-6 rounded-md flex items-center transition-all duration-300 hover:from-[#488DB4] hover:to-[#022F56] shadow-md hover:shadow-lg">
+                <MessageCircle size={14} className="mr-2" />
                 Message
               </button>
             </div>
           </div>
 
-          <p className="text-[#022F56] text-lg mb-8 leading-relaxed border-l-4 border-[#85C4E4] pl-4 py-2">
-            {user.bio}
-          </p>
+          <div className="mb-8">
+            <p className={`text-[#022F56] text-sm leading-relaxed border-l-4 border-[#85C4E4] pl-4 ${!showFullBio ? 'line-clamp-4' : ''}`} style={{ whiteSpace: 'pre-wrap' , lineHeight: '1'}}>
+              {currentUser?.bio || 'No bio available'}
+            </p>
+            {currentUser?.bio && currentUser.bio.split('\n').length > 3 && (
+              <button 
+                onClick={() => setShowFullBio(!showFullBio)}
+                className="text-[#488DB4] text-sm font-medium mt-1 hover:underline focus:outline-none"
+              >
+                {showFullBio ? 'Show less' : 'Read more'}
+              </button>
+            )}
+          </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-[#CCDEE4]/30 rounded-xl p-4 text-center">
-              <div className="text-2xl font-semibold text-[#02182E]">{user.posts}</div>
-              <div className="text-[#488DB4]">Posts</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div className="bg-[#CCDEE4]/30 rounded-xl  text-center pb-1">
+              <div className="text-lg font-semibold text-[#02182E]">{currentUser?.posts}</div>
+              <div className="text-[#488DB4] text-xs">Posts</div>
             </div>
-            <div className="bg-[#CCDEE4]/30 rounded-xl p-4 text-center">
-              <div className="text-2xl font-semibold text-[#02182E]">{user.photos}</div>
-              <div className="text-[#488DB4]">Photos</div>
+            <div className="bg-[#CCDEE4]/30 rounded-xl  text-center pb-1">
+              <div className="text-lg font-semibold text-[#02182E]">{currentUser?.photos}</div>
+              <div className="text-[#488DB4] text-xs">Photos</div>
             </div>
-            <div className="bg-[#CCDEE4]/30 rounded-xl p-4 text-center">
-              <div className="text-2xl font-semibold text-[#02182E]">{user.friends}</div>
-              <div className="text-[#488DB4]">Friends</div>
+            <div className="bg-[#CCDEE4]/30 rounded-xl  text-center pb-1">
+              <div className="text-lg font-semibold text-[#02182E]">{currentUser?.friends}</div>
+              <div className="text-[#488DB4] text-xs">Friends</div>
             </div>
-            <div className="bg-[#CCDEE4]/30 rounded-xl p-4 text-center">
-              <div className="text-2xl font-semibold text-[#02182E]">{user.mutualFriends}</div>
-              <div className="text-[#488DB4]">Mutual</div>
+            <div className="bg-[#CCDEE4]/30 rounded-xl  text-center pb-1">
+              <div className="text-lg font-semibold text-[#02182E]">{currentUser?.mutualFriends}</div>
+              <div className="text-[#488DB4] text-xs">Mutual</div>
             </div>
           </div>
 
           {/* Contact Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="flex items-center text-[#022F56]">
-              <Mail size={18} className="mr-3 text-[#488DB4]" />
-              <span>{user.email}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div className="flex items-center text-xs text-[#022F56]">
+              <Mail size={16} className="mr-3 text-[#488DB4]" />
+              <span>{currentUser?.email}</span>
             </div>
-            <div className="flex items-center text-[#022F56]">
-              <Phone size={18} className="mr-3 text-[#488DB4]" />
-              <span>{user.phone}</span>
+            <div className="flex items-center text-xs text-[#022F56]">
+              <Phone size={16} className="mr-3 text-[#488DB4]" />
+              <span>{currentUser?.phone}</span>
             </div>
-            <div className="flex items-center text-[#022F56]">
-              <Calendar size={18} className="mr-3 text-[#488DB4]" />
-              <span>Joined {user.joinDate}</span>
+            <div className="flex items-center text-xs text-[#022F56]">
+              <Calendar size={16} className="mr-3 text-[#488DB4]" />
+              <span>Joined {currentUser?.joinDate}</span>
             </div>
-            <div className="flex items-center text-[#022F56]">
-              <Shield size={18} className="mr-3 text-[#488DB4]" />
+            <div className="flex items-center text-xs text-[#022F56]">
+              <Shield size={16} className="mr-3 text-[#488DB4]" />
               <span>Identity verified</span>
             </div>
           </div>
@@ -192,12 +322,12 @@ const FriendProfileInfo = () => {
           {/* Tab Content */}
           {activeTab === 'photos' && (
             <div>
-              <h3 className="text-xl font-light text-[#02182E] mb-6 flex items-center">
-                <Camera className="mr-2 text-[#488DB4]" size={22} />
+              <h3 className="text-md font-light text-[#02182E] mb-6 flex items-center">
+                <Camera className="mr-2 text-[#488DB4]" size={16} />
                 Photo Gallery
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {user.photosData.map(photo => (
+                {currentUser.photosData.map(photo => (
                   <div 
                     key={photo.id} 
                     className="relative rounded-xl overflow-hidden shadow-md cursor-pointer transition-transform duration-300 hover:scale-105"

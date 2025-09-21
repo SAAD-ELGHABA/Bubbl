@@ -38,6 +38,7 @@ export const register = (payload,nav) => async (dispatch) => {
 // Logout
 export const logout = () => (dispatch) => {
   dispatch({ type: "LOGOUT" });
+  localStorage.removeItem('token')
 };
 
 export const updateProfile = (profile) => async (dispatch) => {

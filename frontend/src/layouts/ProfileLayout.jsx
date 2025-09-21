@@ -79,13 +79,14 @@ const ProfileLayout = () => {
 
       {/* Sidebar */}
       <div
-        className={`w-64 bg-[#02182E] text-white p-4 fixed h-full top-0 bottom-0 overflow-y-auto z-40 transition-transform duration-300 ease-in-out
+        className={`w-[200px]  bg-[#02182E] text-white p-4 fixed h-full top-0 bottom-0 overflow-y-auto z-40 transition-transform duration-300 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0 md:static`}
         style={{ scrollbarWidth: "none" }}
       >
         <div className="flex items-center justify-center mb-8 mt-4 md:mt-0">
-          <h1 className="text-2xl font-bold hidden md:block">ChatApp</h1>
+          <img src="/bubble tech(1).svg" alt="Bubble Tech" />
+          {/* <h1 className="text-xl font-bold hidden md:block">Bubbl-APP</h1> */}
         </div>
 
         <div className="mb-8 flex flex-col items-center ">
@@ -93,39 +94,39 @@ const ProfileLayout = () => {
             <img
               src={Profile?.avatar || "/picture-placeholder.png"}
               alt="Profile"
-              className="w-24 h-24 rounded-full border-4 object-cover border-[#488DB4] mb-2"
+              className="w-20 h-20 rounded-full border-4 object-cover border-[#488DB4] mb-2"
             />
             {isConnected && (
               <div className="h-3 w-3 rounded-full bg-green-600 animate-pulse absolute bottom-3 right-2"></div>
             )}
           </div>
-          <h2 className="text-lg font-semibold">{user?.name}</h2>
-          <p className="text-sm text-[#85C4E4]">{user?.slug}</p>
+          <h2 className="text-md font-semibold">{user?.name}</h2>
+          <p className="text-xs text-[#85C4E4]">{user?.slug}</p>
         </div>
 
         <nav className="space-y-2">
           <button
-            className={`w-full text-left py-3 px-4 rounded-lg flex items-center ${activeTab(
+            className={`w-full text-xs text-left py-2 px-4 rounded-lg flex items-center ${activeTab(
               PROFILE
             )}`}
           >
             <span className="mr-2">
-              <Newspaper size={18} />
+              <Newspaper size={16} />
             </span>{" "}
             Feeds
           </button>
 
           <Link to={MESSAGES} onClick={() => setSidebarOpen(false)}>
             <button
-              className={`w-full text-left py-3 px-4 rounded-lg flex items-center ${activeTab(
+              className={`w-full text-left text-xs py-2 px-4 rounded-lg flex items-center ${activeTab(
                 MESSAGES
               )}`}
             >
               <span className="mr-2">
-                <MessageCircleMore size={18} />
+                <MessageCircleMore size={16} />
               </span>{" "}
               Messages
-              <span className="ml-auto bg-[#488DB4] text-white text-xs rounded-full px-2 py-1">
+              <span className="ml-auto bg-[#488DB4] text-white text-[10px] rounded-full px-2 py-1">
                 3
               </span>
             </button>
@@ -133,15 +134,15 @@ const ProfileLayout = () => {
 
           <Link to={NOTIFICATIONS} onClick={() => setSidebarOpen(false)}>
             <button
-              className={`w-full text-left py-3 px-4 rounded-lg flex items-center ${activeTab(
+              className={`w-full text-left text-xs py-2 px-4 rounded-lg flex items-center ${activeTab(
                 NOTIFICATIONS
               )}`}
             >
               <span className="mr-2">
-                <Bell size={18} />
+                <Bell size={16} />
               </span>{" "}
               Notifications
-              <span className="ml-auto bg-[#488DB4] text-white text-xs rounded-full px-2 py-1">
+              <span className="ml-auto bg-[#488DB4] text-white text-[10px] rounded-full px-2 py-1 ">
                 2
               </span>
             </button>
@@ -149,12 +150,12 @@ const ProfileLayout = () => {
 
           <Link to={FRIENDS} onClick={() => setSidebarOpen(false)}>
             <button
-              className={`w-full text-left py-3 px-4 rounded-lg flex items-center ${activeTab(
+              className={`w-full text-left text-xs py-2 px-4 rounded-lg flex items-center ${activeTab(
                 FRIENDS
               )}`}
             >
               <span className="mr-2">
-                <Users size={18} />
+                <Users size={16} />
               </span>{" "}
               Friends
             </button>
@@ -162,10 +163,10 @@ const ProfileLayout = () => {
 
           <Link to={"#"} onClick={() => setSidebarOpen(false)}>
             <button
-              className={`w-full text-left py-3 px-4 rounded-lg flex items-center`}
+              className={`w-full text-left text-xs py-2 px-4 rounded-lg flex items-center`}
             >
               <span className="mr-2">
-                <Camera size={18} />
+                <Camera size={16} />
               </span>{" "}
               Photos
             </button>
@@ -173,12 +174,12 @@ const ProfileLayout = () => {
 
           <Link to={SETTINGS} onClick={() => setSidebarOpen(false)}>
             <button
-              className={`w-full text-left py-3 px-4 rounded-lg flex items-center ${activeTab(
+              className={`w-full text-left text-xs py-2 px-4 rounded-lg flex items-center ${activeTab(
                 SETTINGS
               )}`}
             >
               <span className="mr-2">
-                <Settings size={18} />
+                <Settings size={16} />
               </span>{" "}
               Settings
             </button>
@@ -188,25 +189,25 @@ const ProfileLayout = () => {
         <div className="mt-8">
           <h3 className="text-sm uppercase text-[#85C4E4] mb-2">Suggested</h3>
           <Link to={"#"} onClick={() => setSidebarOpen(false)}>
-            <button className="w-full text-left py-2 px-4 rounded-lg text-[#85C4E4] hover:bg-[#022F56] flex items-center">
+            <button className="w-full text-left text-xs py-2 px-4 rounded-lg text-[#85C4E4] hover:bg-[#022F56] flex items-center">
               <span className="mr-2">
-                <Gamepad size={18} />
+                <Gamepad size={16} />
               </span>{" "}
               Games
             </button>
           </Link>
           <Link to={"#"} onClick={() => setSidebarOpen(false)}>
-            <button className="w-full text-left py-2 px-4 rounded-lg text-[#85C4E4] hover:bg-[#022F56] flex items-center">
+            <button className="w-full text-left text-xs py-2 px-4 rounded-lg text-[#85C4E4] hover:bg-[#022F56] flex items-center">
               <span className="mr-2">
-                <Calendar size={18} />
+                <Calendar size={16} />
               </span>{" "}
               Events
             </button>
           </Link>
           <Link to={"#"} onClick={() => setSidebarOpen(false)}>
-            <button className="w-full text-left py-2 px-4 rounded-lg text-[#85C4E4] hover:bg-[#022F56] flex items-center">
+            <button className="w-full text-left text-xs py-2 px-4 rounded-lg text-[#85C4E4] hover:bg-[#022F56] flex items-center">
               <span className="mr-2">
-                <ChartArea size={18} />
+                <ChartArea size={16} />
               </span>{" "}
               Analytics
             </button>
@@ -218,7 +219,7 @@ const ProfileLayout = () => {
         >
           Logout{" "}
           <span>
-            <LogOut size={18} />
+            <LogOut size={16} />
           </span>
         </button>
         <div className="mt-4 text-center border-t-1 border-white py-2">

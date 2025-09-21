@@ -17,45 +17,35 @@ import {
   ChevronDown,
   Plus,
 } from "lucide-react";
+import { FRIENDPROFILEINFO } from "../../Router";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUsers } from "../../actions/usersActions";
 
 function FriendsPage() {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [professions, setProfessions] = useState([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedProfession, setSelectedProfession] = useState("all");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const dispatch = useDispatch();
+  const {loading,error,allUsers} = useSelector((state) => state.users);
 
-  const getUsersPromise = async () => {
-    setIsLoading(true);
-    try {
-      const res = await getUsers();
-      const fetchedUsers = res?.data?.users || [];
-      setUsers(fetchedUsers);
-      setFilteredUsers(fetchedUsers);
-
-      const profs = Array.from(
-        new Set(
-          fetchedUsers.map((user) => user.profile?.profession).filter(Boolean)
-        )
-      );
-      setProfessions(profs);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  
+  
 
   useEffect(() => {
-    getUsersPromise();
+    dispatch(fetchUsers())
   }, []);
 
   useEffect(() => {
-    let filtered = users;
+   setUsers(allUsers)
+   setProfessions(Array.from(new Set(allUsers.map(user => user.profile?.profession))))
+  },[allUsers])
 
+  useEffect(() => {
+    let filtered = users;
     if (searchTerm) {
       filtered = filtered.filter(
         (user) =>
@@ -76,25 +66,25 @@ function FriendsPage() {
   }, [searchTerm, users, selectedProfession]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#CCDEE4] to-[#E6F2F7] p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#CCDEE4] to-[#E6F2F7] p-4 md:px-8 md:py-2">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
           <div className="mb-6 md:mb-0">
             <div className="flex items-center mb-2">
               <div className="h-0.5 w-12 bg-gradient-to-r from-[#488DB4] to-[#85C4E4] mr-4"></div>
-              <h1 className="text-4xl font-light text-[#02182E] tracking-wide">
+              <h1 className="text-2xl font-light text-[#02182E] tracking-wide">
                 Elite Network
               </h1>
             </div>
-            <p className="text-[#022F56] font-light mt-3 ml-16">
+            <p className="text-[#022F56] text-sm font-light ml-16">
               Connect with distinguished professionals
             </p>
           </div>
           <div className="flex items-center">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3 flex items-center shadow-lg border border-white/30">
-              <Award className="text-[#488DB4] mr-2" size={20} />
-              <span className="text-sm font-medium text-[#022F56] tracking-wide">
+              <Award className="text-[#488DB4] mr-2" size={16} />
+              <span className="text-xs font-medium text-[#022F56] tracking-wide">
                 PREMIUM NETWORK
               </span>
             </div>
@@ -102,16 +92,16 @@ function FriendsPage() {
         </div>
 
         {/* Search and Filter Section */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-10 border border-white/30">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-xl p-6 mb-10 border border-white/30">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             <div className="relative w-full lg:w-2/5">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Search className="text-[#488DB4]" size={20} />
+              <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                <Search className="text-[#488DB4]" size={16} />
               </div>
               <input
                 type="text"
                 placeholder="Search distinguished professionals..."
-                className="w-full pl-12 pr-4 py-3.5 border border-[#85C4E4]/30 rounded-xl focus:ring-2 focus:ring-[#488DB4]/40 focus:border-transparent bg-white/50 text-[#022F56] placeholder-[#488DB4]/60 font-light tracking-wide transition-all duration-300"
+                className="w-full pl-8 pr-4 py-1 border border-[#85C4E4]/30 rounded-xl focus:ring-2 focus:ring-[#488DB4]/40 focus:border-transparent bg-white/50 text-[#022F56] placeholder-[#488DB4]/60 font-light tracking-wide transition-all duration-300"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={() => setIsSearchFocused(true)}
@@ -160,10 +150,10 @@ function FriendsPage() {
             <div className="w-full lg:w-2/5 relative">
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="flex items-center justify-between w-full bg-white/50 backdrop-blur-sm border border-[#85C4E4]/30 rounded-xl px-4 py-3.5 text-[#022F56] font-light tracking-wide transition-all duration-300 hover:bg-white/70"
+                className="flex items-center justify-between w-full bg-white/50 backdrop-blur-sm border border-[#85C4E4]/30 rounded-xl px-4 py-1 text-[#022F56] font-light tracking-wide transition-all duration-300 hover:bg-white/70"
               >
                 <div className="flex items-center">
-                  <Filter className="text-[#488DB4] mr-2" size={20} />
+                  <Filter className="text-[#488DB4] mr-2" size={16} />
                   <span>
                     {selectedProfession === "all"
                       ? "All Professions"
@@ -171,7 +161,7 @@ function FriendsPage() {
                   </span>
                 </div>
                 <ChevronDown
-                  size={18}
+                  size={16}
                   className={`text-[#488DB4] transition-transform duration-300 ${
                     isFilterOpen ? "rotate-180" : ""
                   }`}
@@ -179,7 +169,7 @@ function FriendsPage() {
               </button>
 
               {isFilterOpen && (
-                <div className="absolute mt-2 w-full bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-[#85C4E4]/30 z-10 p-4">
+                <div className="absolute mt-2 w-full bg-white/95 backdrop-blur-md rounded-xl shadow-xl border border-[#85C4E4]/30 z-50 p-4">
                   <div className="flex justify-between items-center mb-3">
                     <h3 className="font-medium text-[#022F56] text-sm tracking-wide">
                       FILTER BY PROFESSION
@@ -228,7 +218,7 @@ function FriendsPage() {
           </div>
         </div>
 
-        {isLoading ? (
+        {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-pulse">
             {[...Array(8)].map((_, i) => (
               <div
@@ -245,15 +235,15 @@ function FriendsPage() {
             ))}
           </div>
         ) : filteredUsers?.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 z-10">
             {filteredUsers.map((user) => (
               <div
                 key={user._id}
                 className="group bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-1.5 border border-white/30"
               >
                 {/* Profile Header */}
-                <div className="relative">
-                  <div className="h-36 overflow-hidden">
+                <div className="relative z-20">
+                  <div className="h-28 overflow-hidden">
                     <img
                       src={
                         user?.profile?.coverImage || "/cover-placeholder.png"
@@ -265,7 +255,7 @@ function FriendsPage() {
                   </div>
                   <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2">
                     <div className="relative">
-                      <div className="w-24 h-24 rounded-full border-4 border-white bg-white overflow-hidden shadow-lg transition-all duration-500 group-hover:shadow-xl group-hover:scale-105">
+                      <div className="w-20 h-20 rounded-full border-4 border-white bg-white overflow-hidden shadow-lg transition-all duration-500 group-hover:shadow-xl group-hover:scale-105">
                         <img
                           src={
                             user?.profile?.avatar || "/picture-placeholder.png"
@@ -285,31 +275,31 @@ function FriendsPage() {
 
                 {/* Profile Content */}
                 <div className="pt-14 pb-6 px-5 text-center">
-                  <h3 className="font-semibold text-lg text-[#02182E] tracking-wide mb-1">
+                  <h3 className="font-semibold text-sm text-[#02182E] tracking-wide mb-1">
                     {user.name}
                   </h3>
-                  <div className="flex items-center justify-center mb-3">
+                  <div className="flex items-center justify-center mb-1">
                     <Briefcase size={12} className="text-[#488DB4] mr-1.5" />
-                    <span className="text-[#022F56] text-sm font-light">
+                    <span className="text-[#022F56] text-xs font-light">
                       {user.profile?.profession || "No profession"}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-center text-xs text-[#488DB4] font-light mb-5">
+                  <div className="flex items-center justify-center text-xs text-[#488DB4] font-light mb-3">
                     <MapPin size={10} className="mr-1" />
                     {user.profile?.location || "Location not specified"}
                   </div>
 
                   <Link
-                    to={`/me/profile/profile-info/${user?.slug}`}
-                    className="inline-flex items-center justify-center bg-gradient-to-r from-[#022F56] to-[#488DB4] text-white py-3 px-5 rounded-xl tracking-wide font-light transition-all duration-300 hover:from-[#02182E] hover:to-[#022F56] hover:shadow-lg group-hover:shadow-md w-full"
+                    to={FRIENDPROFILEINFO(user?.slug)}
+                    className="inline-flex items-center justify-center bg-gradient-to-r from-[#022F56] to-[#488DB4] text-white py-2 text-xs px-2 rounded-lg tracking-wide font-light transition-all duration-300 hover:from-[#02182E] hover:to-[#022F56] hover:shadow-lg group-hover:shadow-md w-full"
                   >
-                    <MessageCircle size={16} className="mr-2" />
+                    <MessageCircle size={14} className="mr-2" />
                     Start Conversation
                   </Link>
 
                   <button
-                    className="mt-3 w-full flex items-center justify-center text-[#488DB4] text-xs font-light hover:text-[#022F56] transition-colors duration-200"
+                    className="mt-2 text-xs w-full flex items-center justify-center text-[#488DB4] text-xs font-light hover:text-[#022F56] transition-colors duration-200"
                     onClick={async () => {
                       sendFriendRequest(user?._id);
                     }}

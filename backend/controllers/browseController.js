@@ -7,7 +7,7 @@ export const browseUsers = async (req, res) => {
     
     const users = await User.find(
       { _id: { $ne: authUserId } }, 
-      { email: 0, password: 0, __v: 0 }
+      { password: 0, __v: 0 }
     ).populate({
       path: "profile",
       match: { isProfileCompleted: true },

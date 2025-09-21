@@ -95,5 +95,7 @@ export const sendFriendRequest = async (userId)=>{
       Authorization:`Bearer ${token}`
     }
   })
+  console.log(response)
   return response;
 }
+
