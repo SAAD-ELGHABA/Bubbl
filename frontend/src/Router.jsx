@@ -12,6 +12,7 @@ import SettingsTab from "./componentns/tabs/SettingsTab";
 import MessagesPage from "./pages/user/MessagesPage";
 import FriendsPage from "./pages/user/FriendsPage";
 import FriendProfileInfo from "./pages/FriendProfileInfo";
+import NotificationsPage from "./pages/user/NotificationsPage";
 
 export const ROOT = "/";
 export const RESEND_EMAIL = "/resend-email";
@@ -71,7 +72,10 @@ export const Router = createBrowserRouter([
             path: FRIENDPROFILEINFO(":userSlug"),
             element: <FriendProfileInfo />, 
           },
-          // you can add NOTIFICATIONS and MESSAGES here later
+          {
+            path: NOTIFICATIONS,
+            element: <NotificationsPage />,
+          },
         ],
       },
     ],

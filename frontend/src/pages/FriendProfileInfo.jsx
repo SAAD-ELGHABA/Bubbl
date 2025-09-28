@@ -5,7 +5,7 @@ import {
   Calendar, Mail, Phone, Award, Crown, Users, Camera,
   X, Edit3, Shield, Star, Heart, Loader2, AlertCircle
 } from 'lucide-react';
-import { FRIENDS } from '../Router';
+import { FRIENDS, MESSAGES } from '../Router';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserBySlug, fetchUsers } from '../actions/usersActions';
 import { sendFriendRequest } from '../api/apis';
@@ -104,6 +104,10 @@ const FriendProfileInfo = () => {
     } finally {
       setIsSendingRequest(false);
     }
+  };
+
+  const goToMessages = () => {
+    navigate(MESSAGES);
   };
 
   // Show loading state
@@ -243,7 +247,7 @@ const FriendProfileInfo = () => {
                 </div>
               )}
               
-              <button className="bg-gradient-to-r from-[#85C4E4] to-[#488DB4] text-white py-1 px-6 rounded-md flex items-center transition-all duration-300 hover:from-[#488DB4] hover:to-[#022F56] shadow-md hover:shadow-lg">
+              <button onClick={goToMessages} className="bg-gradient-to-r from-[#85C4E4] to-[#488DB4] text-white py-1 px-6 rounded-md flex items-center transition-all duration-300 hover:from-[#488DB4] hover:to-[#022F56] shadow-md hover:shadow-lg">
                 <MessageCircle size={14} className="mr-2" />
                 Message
               </button>

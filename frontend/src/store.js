@@ -3,11 +3,13 @@ import { authReducer } from "./reducers/authReducer";
 import {thunk} from "redux-thunk";
 import { conversationReducer } from "./reducers/conversationReducer";
 import { userReducer } from "./reducers/userReducer";
+import { notificationsReducer } from "./reducers/notificationsReducer";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   conversation:conversationReducer,
-  users:userReducer
+  users:userReducer,
+  notifications: notificationsReducer,
 });
 
 const initialState = {};

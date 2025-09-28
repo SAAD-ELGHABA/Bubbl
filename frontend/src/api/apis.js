@@ -2,7 +2,7 @@ import axios from 'axios'
 
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http://localhost:5173/",
+    baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
     headers:{
         "Content-Type" : "application/json"
     }
@@ -99,3 +99,22 @@ export const sendFriendRequest = async (userId)=>{
   return response;
 }
 
+export const getNotifications = async ()=>{
+  const token = localStorage.getItem('token')
+  const response = await api.get(`/notifications`,{
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  })
+  return response;
+}
+
+export const createNotification = async (payload)=>{
+  const token = localStorage.getItem('token')
+  const response = await api.post(`/notifications`,payload,{
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  })
+  return response;
+}

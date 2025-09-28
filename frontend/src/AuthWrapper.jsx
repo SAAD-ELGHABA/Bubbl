@@ -27,6 +27,9 @@ export default function AuthWrapper() {
             }
             socket.on("connect", () => {
               console.log("✅ Connected to socket:", socket.id);
+              if (response?.user?.id) {
+                socket.emit("register", response.user.id);
+              }
             });
 
             if (response?.profile?.isProfileCompleted) {

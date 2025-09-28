@@ -11,6 +11,7 @@ import browseRoute from "./routes/browseRoute.js";
 import friendShipRouter from "./routes/friendShipRouter.js";
 import { initSocket } from "./socket.js";
 import connectDB from "./utils/mongodb.js";
+import notificationsRoutes from "./routes/notificationsRoutes.js";
 const app = express();
 
 const envFile = process.env.NODE_ENV === "production"
@@ -33,21 +34,6 @@ app.use(
 );
 
 app.use(express.json());
-let onlineUsers = new Map();
-io.on("connection", (socket) => {
-  console.log("⚡ A user connected:", socket.id);
-  socket.on("register", (userId) => {
-    onlineUsers.set(userId, socket.id);
-    console.log("User registered:", userId);
-  });
-
-  socket.on("disconnect", () => {
-    for (let [userId, sId] of onlineUsers.entries()) {
-      if (sId === socket.id) onlineUsers.delete(userId);
-    }
-    console.log("User disconnected:", socket.id);
-  });
-});
 
 app.use(async (req, res, next) => {
   try {
@@ -73,6 +59,8 @@ app.use("/api/friendship",authMiddleware,friendShipRouter)
 
 app.use("/api/conversations", conversationRoutes);
 
+app.use("/api/notifications",authMiddleware,notificationsRoutes)
+
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT,"0.0.0.0", () => console.log(`🚀 Server running on port ${PORT}`));
+server.listen(PORT,"0.0.0.0", () => console.log(`🚀 Server running on port ${PORT}`));  

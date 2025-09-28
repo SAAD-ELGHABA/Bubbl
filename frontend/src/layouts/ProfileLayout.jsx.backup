@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import {
   Bell,
   Calendar,
@@ -44,7 +44,6 @@ const ProfileLayout = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  
   useEffect(() => {
     socket.emit("register", user?.id);
 
@@ -54,14 +53,9 @@ const ProfileLayout = () => {
         payload: {
           type: "friend_request",
           from: data.from,
-          fromName: data.fromName,
-          fromEmail: data.fromEmail,
-          purpose: data.purpose,
-          message: data.message,
           timestamp: new Date().toISOString(),
         },
       });
-      toast.success(`New friend request from ${data.fromName}`);
     });
 
     socket.on("messageNotification", (data) => {
@@ -71,15 +65,10 @@ const ProfileLayout = () => {
           type: "message",
           conversationId: data.conversationId,
           from: data.from,
-          fromName: data.fromName,
-          fromEmail: data.fromEmail,
           text: data.text,
-          purpose: data.purpose,
-          message: data.message,
           timestamp: data.timestamp,
         },
       });
-      toast.info(`New message from ${data.fromName}`);
     });
 
     return () => {
@@ -87,7 +76,6 @@ const ProfileLayout = () => {
       socket.off("messageNotification");
     };
   }, [user?.id, dispatch]);
-  
   return (
     <div className="flex h-screen bg-[#CCDEE4]">
       {/* Mobile Header */}
@@ -113,13 +101,14 @@ const ProfileLayout = () => {
 
       {/* Sidebar */}
       <div
-        className="w-[200px]  bg-[#02182E] text-white p-4 fixed h-full top-0 bottom-0 overflow-y-auto z-40 transition-transform duration-300 ease-in-out
-           
-          md:translate-x-0 md:static"
+        className={`w-[200px]  bg-[#02182E] text-white p-4 fixed h-full top-0 bottom-0 overflow-y-auto z-40 transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
+          md:translate-x-0 md:static`}
         style={{ scrollbarWidth: "none" }}
       >
         <div className="flex items-center justify-center mb-8 mt-4 md:mt-0">
           <img src="/bubble tech(1).svg" alt="Bubble Tech" />
+          {/* <h1 className="text-xl font-bold hidden md:block">Bubbl-APP</h1> */}
         </div>
 
         <div className="mb-8 flex flex-col items-center ">
@@ -139,7 +128,9 @@ const ProfileLayout = () => {
 
         <nav className="space-y-2">
           <button
-            className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center "
+            className={`w-full text-xs text-left py-2 px-4 rounded-lg flex items-center ${activeTab(
+              PROFILE
+            )}`}
           >
             <span className="mr-2">
               <Newspaper size={16} />
@@ -149,7 +140,9 @@ const ProfileLayout = () => {
 
           <Link to={MESSAGES} onClick={() => setSidebarOpen(false)}>
             <button
-              className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center "
+              className={`w-full text-xs text-left py-2 px-4 rounded-lg flex items-center ${activeTab(
+                MESSAGES
+              )}`}
             >
               <span className="mr-2">
                 <MessageCircleMore size={16} />
@@ -160,7 +153,9 @@ const ProfileLayout = () => {
 
           <Link to={FRIENDS} onClick={() => setSidebarOpen(false)}>
             <button
-              className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center "
+              className={`w-full text-xs text-left py-2 px-4 rounded-lg flex items-center ${activeTab(
+                FRIENDS
+              )}`}
             >
               <span className="mr-2">
                 <Users size={16} />
@@ -171,7 +166,9 @@ const ProfileLayout = () => {
 
           <Link to={NOTIFICATIONS} onClick={() => setSidebarOpen(false)}>
             <button
-              className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center justify-between "
+              className={`w-full text-xs text-left py-2 px-4 rounded-lg flex items-center justify-between ${activeTab(
+                NOTIFICATIONS
+              )}`}
             >
               <span className="flex items-center">
                 <span className="mr-2">
@@ -189,7 +186,9 @@ const ProfileLayout = () => {
 
           <Link to={SETTINGS} onClick={() => setSidebarOpen(false)}>
             <button
-              className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center "
+              className={`w-full text-xs text-left py-2 px-4 rounded-lg flex items-center ${activeTab(
+                SETTINGS
+              )}`}
             >
               <span className="mr-2">
                 <Settings size={16} />

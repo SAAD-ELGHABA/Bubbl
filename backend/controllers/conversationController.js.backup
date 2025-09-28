@@ -1,5 +1,4 @@
-﻿import { Conversation } from "../models/Conversation.js";
-import User from "../models/User.js";
+import { Conversation } from "../models/Conversation.js";
 import { getIO } from "../socket.js";
 import { getOnlineUsers } from "../socket.js";
 
@@ -42,9 +41,6 @@ export const addMessage = async (conversationId, senderId, text) => {
     const io = getIO();
     io.to(`conv:${conversationId}`).emit("newMessage", { conversationId, message });
 
-    // Get sender details for notification
-    const sender = await User.findById(senderId).select("name email");
-    
     // Direct notification to other participants
     const onlineUsers = getOnlineUsers();
     const recipients = conversation.participants
@@ -57,11 +53,7 @@ export const addMessage = async (conversationId, senderId, text) => {
         io.to(socketId).emit("messageNotification", {
           conversationId,
           from: senderId,
-          fromName: sender.name,
-          fromEmail: sender.email,
           text,
-          purpose: "sent you a message",
-          message: `${sender.name} sent you a message: ${text}`,
           timestamp: new Date().toISOString(),
         });
       }

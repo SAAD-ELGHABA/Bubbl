@@ -1,4 +1,4 @@
-﻿import { useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -25,52 +25,40 @@ const LoginForm = () => {
     e.preventDefault();
     dispatch(login(formData, navigate));
   };
-
   //login with google
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
+        // tokenResponse has { access_token, expires_in, scope, token_type }
         const { access_token } = tokenResponse;
 
         const { data } = await axios.post(
           "http://localhost:5000/api/user/google",
           {
-            token: access_token,
+            token: access_token, // send the actual Google access_token
           }
         );
+        console.log(data);
 
         dispatch({ type: "LOGIN_SUCCESS", payload: data?.user });
         dispatch({ type: "SET_PROFILE", payload: data?.profile });
         localStorage?.setItem("token", data?.token);
-        
-        // Navigate based on profile completion
-        if (data?.profile?.isProfileCompleted) {
-          navigate(PROFILE);
-        } else {
-          navigate("/complete-profile");
-        }
       } catch (error) {
-        console.error("Google login error:", error.response?.data || error.message);
-        toast.error("Google login failed");
+        console.error(
+          "Google signup error:",
+          error.response?.data || error.message
+        );
       }
     },
     onError: () => {
-      console.log("Google Login Failed");
-      toast.error("Google login failed");
+      console.log("Google Signup Failed");
     },
   });
 
   useEffect(() => {
-    if (success) {
-      toast.success("You are logged in successfully!");
-    }
-  }, [success]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
+    success && toast.success("You are loged in successfully!");
+    user ? (Profile?.isProfileCompleted ? navigate(PROFILE) : navigate("/complete-profile")) : navigate("/");
+  }, [navigate, success, user]);
 
   return (
     <form className="space-y-5" onSubmit={handleLogin}>

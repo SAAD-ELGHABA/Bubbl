@@ -21,13 +21,30 @@ export const initSocket = (server) => {
 
     socket.on("register", (userId) => {
       onlineUsers.set(userId, socket.id);
+      io.emit("onlineUsers", Array.from(onlineUsers.keys()));
       console.log("User registered:", userId);
+    });
+
+    // Join a conversation room
+    socket.on("joinConversation", (conversationId) => {
+      socket.join(`conv:${conversationId}`);
+    });
+
+    // Leave a conversation room
+    socket.on("leaveConversation", (conversationId) => {
+      socket.leave(`conv:${conversationId}`);
+    });
+
+    // Send message event to route to room
+    socket.on("sendMessage", ({ conversationId, message }) => {
+      io.to(`conv:${conversationId}`).emit("newMessage", { conversationId, message });
     });
 
     socket.on("disconnect", () => {
       for (let [userId, sId] of onlineUsers.entries()) {
         if (sId === socket.id) onlineUsers.delete(userId);
       }
+      io.emit("onlineUsers", Array.from(onlineUsers.keys()));
       console.log("User disconnected:", socket.id);
     });
   });
