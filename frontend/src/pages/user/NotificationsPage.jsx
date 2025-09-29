@@ -85,10 +85,10 @@ const NotificationsPage = () => {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center">
                     <h3 className="font-semibold text-[#02182E] text-lg">
-                      {
+                      {/* {
                         const user =  allUsers.filter(user => user._id === notification.sendFrom)
                         return user.name
-                      }
+                      } */}
                     </h3>
                     {notification.fromEmail && (
                       <span className="ml-2 text-sm text-gray-500">({notification.fromEmail})</span>
