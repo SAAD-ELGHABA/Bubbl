@@ -4,7 +4,8 @@ export const createNotification = async (req, res) => {
     console.log(req.body);
     try {
         const notification = await Notification.create({
-            user: req.user._id,
+            sendTo: req.body.sendTo,
+            sendFrom:req.body.sendFrom,   
             message: req.body.message,
             read: false,
             createdAt: new Date()
@@ -17,8 +18,9 @@ export const createNotification = async (req, res) => {
 
 
 export const getNotifications = async (req, res) => {
+    console.log(req.user.id)
     try {
-        const notifications = await Notification.find({ user: req.user.id })
+        const notifications = await Notification.find({ sendTo: req.user.id })
         .sort({ createdAt: -1 })
         .limit(50);
         res.json(notifications);

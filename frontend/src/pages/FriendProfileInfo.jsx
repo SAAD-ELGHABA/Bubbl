@@ -9,6 +9,8 @@ import { FRIENDS, MESSAGES } from '../Router';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserBySlug, fetchUsers } from '../actions/usersActions';
 import { sendFriendRequest } from '../api/apis';
+import { createNotificationAction } from '../actions/notificationActions';
+import userId from '../api/getUserId';
 
 const FriendProfileInfo = () => {
   const [activeTab, setActiveTab] = useState('posts');
@@ -86,7 +88,11 @@ const FriendProfileInfo = () => {
 
   const connectWithUser = async () => {
     if (!user?._id) return;
-    
+    dispatch(createNotificationAction({
+      message: "Friendship request!",
+      sendTo: user._id,
+      sendFrom: userId
+    })) 
     try {
       setRequestError(null);
       setIsSendingRequest(true);

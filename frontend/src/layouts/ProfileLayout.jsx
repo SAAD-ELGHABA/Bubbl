@@ -1,10 +1,6 @@
 ﻿import React, { useState } from "react";
 import {
   Bell,
-  Calendar,
-  Camera,
-  ChartArea,
-  Gamepad,
   LogOut,
   MessageCircleMore,
   Newspaper,
@@ -19,13 +15,18 @@ import { toast } from "sonner";
 import { MESSAGES, NOTIFICATIONS, PROFILE, SETTINGS, FRIENDS } from "../Router";
 import { useEffect } from "react";
 import socket from "../utils/socket";
+import { fetchNotifications } from "../actions/notificationActions";
+// import { logout } from "../actions/authActions";
 
 const ProfileLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
   const { Profile } = useSelector((state) => state.auth);
   const { isConnected } = useSelector((state) => state.auth);
-  const { unreadCount } = useSelector((state) => state.notifications || { unreadCount: 0 });
+  const {unreadCount} = useSelector((state) =>state.notifications)
+  // const { unreadCount } = useSelector(
+  //   (state) => state.notifications || { unreadCount: 0 }
+  // );
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -38,13 +39,23 @@ const ProfileLayout = () => {
 
   const handleLogOut = () => {
     dispatch({ type: "LOGOUT" });
+    localStorage.removeItem("token");
+    // localStorage.removeItem("user_slug");
     toast.success("You are logged out successfully!");
   };
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  
+
+  useEffect(() =>{
+    console.log(unreadCount)
+  },[unreadCount])
+
+  useEffect(()=>{
+    dispatch(fetchNotifications())
+  },[])
+
   useEffect(() => {
     socket.emit("register", user?.id);
 
@@ -87,7 +98,7 @@ const ProfileLayout = () => {
       socket.off("messageNotification");
     };
   }, [user?.id, dispatch]);
-  
+
   return (
     <div className="flex h-screen bg-[#CCDEE4]">
       {/* Mobile Header */}
@@ -138,9 +149,7 @@ const ProfileLayout = () => {
         </div>
 
         <nav className="space-y-2">
-          <button
-            className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center "
-          >
+          <button className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center ">
             <span className="mr-2">
               <Newspaper size={16} />
             </span>{" "}
@@ -148,9 +157,7 @@ const ProfileLayout = () => {
           </button>
 
           <Link to={MESSAGES} onClick={() => setSidebarOpen(false)}>
-            <button
-              className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center "
-            >
+            <button className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center ">
               <span className="mr-2">
                 <MessageCircleMore size={16} />
               </span>{" "}
@@ -159,9 +166,7 @@ const ProfileLayout = () => {
           </Link>
 
           <Link to={FRIENDS} onClick={() => setSidebarOpen(false)}>
-            <button
-              className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center "
-            >
+            <button className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center ">
               <span className="mr-2">
                 <Users size={16} />
               </span>{" "}
@@ -170,9 +175,7 @@ const ProfileLayout = () => {
           </Link>
 
           <Link to={NOTIFICATIONS} onClick={() => setSidebarOpen(false)}>
-            <button
-              className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center justify-between "
-            >
+            <button className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center justify-between ">
               <span className="flex items-center">
                 <span className="mr-2">
                   <Bell size={16} />
@@ -188,9 +191,7 @@ const ProfileLayout = () => {
           </Link>
 
           <Link to={SETTINGS} onClick={() => setSidebarOpen(false)}>
-            <button
-              className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center "
-            >
+            <button className="w-full text-xs text-left py-2 px-4 rounded-lg flex items-center ">
               <span className="mr-2">
                 <Settings size={16} />
               </span>{" "}
@@ -211,7 +212,7 @@ const ProfileLayout = () => {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 md:ml-[200px] mt-14 md:mt-0">
+      <div className="flex-1 md: mt-14 md:mt-0">
         <Outlet />
       </div>
     </div>

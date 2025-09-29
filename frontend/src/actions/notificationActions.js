@@ -4,7 +4,8 @@ export const fetchNotifications = () => async (dispatch) => {
     try {
         dispatch({ type: "GET_NOTIFICATIONS_REQUEST" });
         const res = await getNotifications();
-        dispatch({ type: "GET_NOTIFICATIONS_SUCCESS", payload: res.data?.notifications });
+        console.log(res.data)
+        dispatch({ type: "GET_NOTIFICATIONS", payload: res.data });
     } catch (error) {
         dispatch({ type: "GET_NOTIFICATIONS_FAILURE", payload: error });
     }

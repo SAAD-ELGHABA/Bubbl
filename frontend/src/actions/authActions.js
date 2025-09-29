@@ -48,11 +48,14 @@ export const register = (payload, navigate) => async (dispatch) => {
 };
 
 // Logout
-export const logout = () => (dispatch) => {
-  dispatch({ type: "LOGOUT" });
-  localStorage.removeItem("token");
-  localStorage.removeItem("user_slug");
-};
+// export const logout = () =>  (dispatch) => {
+//   console.log("hello")
+//     if()
+//     window.localStorage.removeItem("token");
+//     window.localStorage.removeItem("user_slug");
+//     dispatch({ type: "LOGOUT" });
+
+// };
 
 export const updateProfile = (profile) => async (dispatch) => {
   try {

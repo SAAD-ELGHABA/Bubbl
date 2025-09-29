@@ -61,10 +61,10 @@ const LoginForm = () => {
   });
 
   useEffect(() => {
-    if (success) {
+    if (localStorage.getItem('token')) {
       toast.success("You are logged in successfully!");
     }
-  }, [success]);
+  }, [localStorage.getItem('token')]);
 
   useEffect(() => {
     if (error) {

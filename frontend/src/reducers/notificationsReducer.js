@@ -7,6 +7,15 @@ export const initialNotificationsState = {
 
 export const notificationsReducer = (state = initialNotificationsState, action) => {
   switch (action.type) {
+    case "GET_NOTIFICATIONS": {
+      let count = 0;
+      
+      action.payload.forEach(ele => {
+        ele.read == false ? count += 1 : '';
+      });
+      console.log(count)
+     return { ...state, unreadCount:count, items: action.payload}
+    } 
     case "NOTIFICATIONS_ADD": {
       const newItems = Array.isArray(action.payload) ? action.payload : [action.payload];
       return {

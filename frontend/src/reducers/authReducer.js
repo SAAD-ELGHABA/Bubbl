@@ -25,7 +25,7 @@ export const authReducer = (state = initialState, action) => {
       return { ...state, loading: false, error: action.payload };
 
     case "LOGOUT":
-      return { ...state, user: null };
+      return { ...state, user: null, Profile: null, isConnected:false };
     case "SET_USER":
       return {...state, user:action.payload}
     case "IS_CONNECTED":

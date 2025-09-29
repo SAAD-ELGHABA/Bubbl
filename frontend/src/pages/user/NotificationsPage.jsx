@@ -1,10 +1,12 @@
 ﻿import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Bell, MessageSquare, UserPlus, CheckCheck, Clock, Mail } from "lucide-react";
+import { fetchUsers } from "../../actions/usersActions";
 
 const NotificationsPage = () => {
   const dispatch = useDispatch();
   const { items, unreadCount } = useSelector((s) => s.notifications || { items: [], unreadCount: 0 });
+  const { allUsers } = useSelector(s => s.users)
 
   const markAllRead = () => dispatch({ type: "NOTIFICATIONS_MARK_ALL_READ" });
 
@@ -27,7 +29,13 @@ const NotificationsPage = () => {
 
   useEffect(() => {
     dispatch({ type: "NOTIFICATIONS_MARK_ALL_READ" });
+    dispatch(fetchUsers())
+    
   }, []);
+
+  useEffect(() => {
+    console.log(allUsers)
+  },[allUsers])
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -77,7 +85,10 @@ const NotificationsPage = () => {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center">
                     <h3 className="font-semibold text-[#02182E] text-lg">
-                      {notification.fromName || notification.from}
+                      {
+                        const user =  allUsers.filter(user => user._id === notification.sendFrom)
+                        return user.name
+                      }
                     </h3>
                     {notification.fromEmail && (
                       <span className="ml-2 text-sm text-gray-500">({notification.fromEmail})</span>
@@ -85,12 +96,12 @@ const NotificationsPage = () => {
                   </div>
                   <div className="flex items-center text-gray-500 text-sm">
                     <Clock size={14} className="mr-1" />
-                    {formatTime(notification.timestamp)}
+                    {formatTime(notification.createdAt)}
                   </div>
                 </div>
                 
                 <div className="mb-2">
-                  <p className="text-[#022F56] font-medium">
+                  <p className="text-[#022F56] font-medium capitalize">
                     {notification.purpose || (notification.type === "friend_request" ? "wants to connect with you" : "sent you a message")}
                   </p>
                 </div>
@@ -112,7 +123,7 @@ const NotificationsPage = () => {
                 <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-100">
                   <div className="flex items-center text-xs text-gray-500">
                     <Mail size={12} className="mr-1" />
-                    {new Date(notification.timestamp).toLocaleString()}
+                    {new Date(notification.createdAt).toLocaleString()}
                   </div>
                   <div className="flex space-x-2">
                     {notification.type === "friend_request" && (

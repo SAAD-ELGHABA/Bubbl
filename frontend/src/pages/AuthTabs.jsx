@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import { LogIn, Eye, EyeOff, UserPlus } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { login, register } from "../actions/authActions";
-import { useNavigate } from "react-router-dom";
-import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
+
 import SignUpForm from "../componentns/forms/SignUpForm";
 import LoginForm from "../componentns/forms/LoginForm";
 
